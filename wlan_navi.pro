@@ -4,21 +4,23 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 TARGET = wlan_navi
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp\
+	mapswidget.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+		mapswidget.h
 
-FORMS    += mainwindow.ui
+FORMS    +=
 
-CONFIG += mobility
-MOBILITY = 
+CONFIG += mobility11
+MOBILITY = location
 
 symbian {
     TARGET.UID3 = 0xedb44722
