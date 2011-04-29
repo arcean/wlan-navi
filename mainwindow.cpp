@@ -37,7 +37,7 @@ using namespace std;
 
 
 /**
-	Initialize MainWindow
+    Initialize MainWindow
 */
 MainWindow::MainWindow() :
     serviceProvider(0),
@@ -61,9 +61,18 @@ MainWindow::MainWindow() :
     connect(netConfigManager, SIGNAL(updateCompleted()),
             this, SLOT(openNetworkSession()));
     netConfigManager->updateConfigurations();
-    this->initialize();
 
+    this->initialize();
     this->grabZoomKeys(true);
+    this->initializeWlan();
+}
+
+/**
+  Initialize wlan interface
+*/
+void MainWindow::initializeWlan()
+{
+    wlanInterface = new WlanMaemo();
 }
 
 /**

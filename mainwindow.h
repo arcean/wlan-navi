@@ -30,6 +30,7 @@
 #include "qgeocoordinate.h"
 
 #include "mapswidget.h"
+#include "WlanMaemo.h"
 
 using namespace QtMobility;
 
@@ -39,6 +40,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
     ~MainWindow();
+    WlanMaemo *wlanInterface;
 
 public slots:
     void initialize();
@@ -53,8 +55,8 @@ private slots:
     void disableTracking();
 
     void openNetworkSession();
-
     void grabZoomKeys(bool grab);
+    void initializeWlan();
 
 private:
     QGeoServiceProvider *serviceProvider;

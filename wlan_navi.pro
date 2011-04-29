@@ -12,14 +12,20 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp\
-	mapswidget.cpp
+	mapswidget.cpp \
+    WlanMaemo.cpp
 
 HEADERS  += mainwindow.h \
-		mapswidget.h
+		mapswidget.h \
+    WlanMaemo.h
 
 FORMS    +=
 
 CONFIG += mobility11
+
+CONFIG += link_pkgconfig
+PKGCONFIG += glib-2.0 liblocation hildon-1 dbus-1
+
 MOBILITY = location
 
 symbian {
