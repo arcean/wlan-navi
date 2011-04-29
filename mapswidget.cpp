@@ -25,6 +25,7 @@
 #include <QParallelAnimationGroup>
 #include <QTimer>
 #include <QDebug>
+#include <QPixmap>
 
 #include "qgeocoordinate.h"
 
@@ -32,6 +33,7 @@ GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
     QGraphicsGeoMap(manager), mapsWidget(mapsWidget)
 {
     this->setFocus();
+    connect(this, SIGNAL(mapTouched()), mapsWidget, SLOT(showFullscreenButton()));
 }
 
 GeoMap::~GeoMap()
@@ -74,6 +76,7 @@ void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     panActive = false;
 
+    emit mapTouched();
     this->setFocus();
     event->accept();
 }
@@ -85,6 +88,7 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         pan(delta.x(), delta.y());
         emit panned();
     }
+
     this->setFocus();
     event->accept();
 }
@@ -108,6 +112,7 @@ void GeoMap::keyPressEvent(QKeyEvent *event)
             }
             break;
     }
+    emit mapTouched();
     this->setFocus();
     event->accept();
 }
@@ -166,7 +171,12 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     d->fsButtonItem = new FullscreenButtonItem(d->map);
     sc->addItem(d->fsButtonItem);
+    sc->addItem(d->fsButtonItem->fsPixmap);
     connect(d->fsButtonItem, SIGNAL(mouseReleaseEventSignal()), this->parentWidget(), SLOT(toggleFullScreen()));
+    d->fsButtonItem->timer = new QTimer(this);
+    d->fsButtonItem->timer->setInterval(500);
+    connect(d->fsButtonItem->timer, SIGNAL(timeout()), d->fsButtonItem, SLOT(onTimeOut()));
+    d->fsButtonItem->timer->start();
 
     d->view->resize(this->size());
     d->view->centerOn(d->map);
@@ -175,6 +185,12 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     d->map->setCenter(QGeoCoordinate(-27.5796, 153.1));
     d->map->setZoomLevel(15);
+}
+
+void MapsWidget::showFullscreenButton()
+{
+    d->fsButtonItem->fsPixmap->show();
+    d->fsButtonItem->timer->start();
 }
 
 void MapsWidget::setMyLocation(QGeoCoordinate location, bool center)
@@ -197,7 +213,7 @@ void MapsWidget::resizeEvent(QResizeEvent *event)
         d->map->resize(width()-2, height()-2);
         d->view->centerOn(d->map);
 
-        d->fsButtonItem->setRect(width() - 40, height() - 40, 40, 40);
+        d->fsButtonItem->setRect(width() - 48, height() - 48, 48, 48);
     }
 }
 
@@ -225,64 +241,53 @@ void MapsWidget::showEvent(QShowEvent *event)
     resizeEvent(0);
 }
 
-
-class FullscreenButtonItemPrivate
+FullscreenButtonItem::FullscreenButtonItem(GeoMap *map)
 {
-public:
-    GeoMap *map;
-    QGraphicsSimpleTextItem *fsText;
-
-
-    bool pressedFullscreenButton;
-};
-
-FullscreenButtonItem::FullscreenButtonItem(GeoMap *map) :
-    d(new FullscreenButtonItemPrivate)
-{
-    d->map = map;
-    d->pressedFullscreenButton = false;
+    map = map;
+    pressedFullscreenButton = false;
 
     setPen(QPen(QBrush(), 0));
-    setBrush(QBrush(QColor(0,0,0,150)));
+    setBrush(QBrush(Qt::transparent));
 
-    d->fsText = new QGraphicsSimpleTextItem(this);
-    d->fsText->setText("FS");
-    d->fsText->setBrush(QBrush(Qt::white));
+    fsPixmap = new QGraphicsPixmapItem(QPixmap("/usr/share/icons/hicolor/48x48/hildon/general_fullsize.png"));
 }
 
 void FullscreenButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
 {
     QGraphicsRectItem::setRect(x, y, w, h);
 
-    QFont f;
-    f.setFixedPitch(true);
-    f.setPixelSize(h/3.0);
-    d->fsText->setFont(f);
-
-    QRectF fsBound = d->fsText->boundingRect();
-    QPointF fsCenter(x+w/2.0, y+3.0*h/4.0);
+    QRectF fsBound = fsPixmap->boundingRect();
+    QPointF fsCenter(x+w/2.0, y+h/2.0);
     QPointF fsDelta = fsCenter - fsBound.center();
-    d->fsText->setPos(fsDelta);
+    QPointF f(0,0);
+    fsPixmap->setPos(fsDelta);
+
 }
 
 void FullscreenButtonItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     const QPointF pos = event->pos();
 
-    d->pressedFullscreenButton = true;
-    d->map->setFocus();
+    pressedFullscreenButton = true;
+    timer->start();
+    fsPixmap->show();
     event->accept();
 }
 
 void FullscreenButtonItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     emit mouseReleaseEventSignal();
-    d->pressedFullscreenButton = false;
-    d->map->setFocus();
+    pressedFullscreenButton = false;
     event->accept();
 }
 
 void FullscreenButtonItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     event->accept();
+}
+
+void FullscreenButtonItem::onTimeOut()
+{
+    this->fsPixmap->hide();
+    this->timer->stop();
 }

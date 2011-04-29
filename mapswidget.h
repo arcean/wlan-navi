@@ -25,6 +25,7 @@
 #include <QWidget>
 #include <QGraphicsRectItem>
 #include <QGraphicsSimpleTextItem>
+#include <QTimer>
 
 #include "qgraphicsgeomap.h"
 #include "qgeomappingmanager.h"
@@ -66,6 +67,7 @@ private:
 
 signals:
     void panned();
+    void mapTouched();
 };
 
 class FixedGraphicsView : public QGraphicsView
@@ -97,6 +99,7 @@ public:
 
 public slots:
     void initialize(QGeoMappingManager *manager);
+    void showFullscreenButton();
 
 signals:
     void mapPanned();
@@ -108,20 +111,26 @@ private:
     void showEvent(QShowEvent *event);
 };
 
-class FullscreenButtonItemPrivate;
 class FullscreenButtonItem : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
 public:
     explicit FullscreenButtonItem(GeoMap *map);
 
+    QGraphicsPixmapItem *fsPixmap;
+    QTimer *timer;
+
     void setRect(qreal x, qreal y, qreal w, qreal h);
+
+public slots:
+    void onTimeOut();
+
+private:
+    GeoMap *map;
+    bool pressedFullscreenButton;
 
 signals:
     void mouseReleaseEventSignal();
-
-private:
-    FullscreenButtonItemPrivate *d;
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
