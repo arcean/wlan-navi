@@ -26,6 +26,9 @@
 #include <QAction>
 #include <QVBoxLayout>
 #include <QMap>
+#include <QtGui/QX11Info>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 #include <iostream>
 
@@ -57,6 +60,8 @@ MainWindow::MainWindow() :
             this, SLOT(openNetworkSession()));
     netConfigManager->updateConfigurations();
     this->initialize();
+
+    this->grabZoomKeys(true);
 }
 
 /**
@@ -111,10 +116,10 @@ void MainWindow::initialize()
     }
 
 
-  	QMap<QString, QVariant >  parameters;
+        QMap<QString, QVariant >  parameters;
     parameters["mapping.servers"] = QStringList("http://a.tile.opencyclemap.org/cycle/")
-  		<< "http://b.tile.opencyclemap.org/cycle/"
-  		<< "http://c.tile.opencyclemap.org/cycle/";
+                << "http://b.tile.opencyclemap.org/cycle/"
+                << "http://c.tile.opencyclemap.org/cycle/";
     serviceProvider = new QGeoServiceProvider("openstreetmap", parameters);
 
     mapsWidget->initialize(serviceProvider->mappingManager());
@@ -129,11 +134,12 @@ void MainWindow::initialize()
     if (!positionSource) {
         mapsWidget->setMyLocation(QGeoCoordinate(51.11, 17.022222));
     } else {
-    	positionSource->setUpdateInterval(1000);
+        positionSource->setUpdateInterval(1000);
         connect(positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(updateMyPosition(QGeoPositionInfo)));
         positionSource->startUpdates();
     }
+
 }
 
 void MainWindow::disableTracking()
@@ -165,4 +171,31 @@ void MainWindow::showNavigateDialog()
 void MainWindow::showSearchDialog()
 {
 
+}
+
+void MainWindow::grabZoomKeys(bool grab)
+{
+    #ifdef Q_WS_MAEMO_5
+        if (!winId()) {
+            qWarning("Can't grab keys unless we have a window id");
+            return;
+        }
+
+        unsigned long val = (grab) ? 1 : 0;
+        Atom atom = XInternAtom(QX11Info::display(), "_HILDON_ZOOM_KEY_ATOM", False);
+        if (!atom) {
+            qWarning("Unable to obtain _HILDON_ZOOM_KEY_ATOM. This will only work "
+                    "on a Maemo 5 device!");
+            return;
+        }
+
+        XChangeProperty (QX11Info::display(),
+                winId(),
+                atom,
+                XA_INTEGER,
+                32,
+                PropModeReplace,
+                reinterpret_cast<unsigned char *>(&val),
+                1);
+    #endif
 }

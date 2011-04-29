@@ -53,6 +53,8 @@ private slots:
 
     void openNetworkSession();
 
+    void grabZoomKeys(bool grab);
+
 private:
     QGeoServiceProvider *serviceProvider;
     MapsWidget *mapsWidget;

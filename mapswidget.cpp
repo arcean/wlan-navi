@@ -95,7 +95,20 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 void GeoMap::keyPressEvent(QKeyEvent *event)
 {
-
+    switch (event->key()) {
+        case Qt::Key_F7:
+            if (zoomLevel() < maximumZoomLevel()) {
+                setZoomLevel(zoomLevel() + 1);
+            }
+            break;
+        case Qt::Key_F8:
+            if (zoomLevel() > minimumZoomLevel()) {
+                setZoomLevel(zoomLevel() - 1);
+            }
+            break;
+    }
+    this->setFocus();
+    event->accept();
 }
 
 FixedGraphicsView::FixedGraphicsView(QGraphicsScene *scene, QWidget *parent) :
