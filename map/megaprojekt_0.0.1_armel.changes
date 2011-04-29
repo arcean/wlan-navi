@@ -1,0 +1,22 @@
+Format: 1.8
+Date: Tue, 12 Apr 2011 13:11:56 +0200
+Source: megaprojekt
+Binary: megaprojekt
+Architecture: armel
+Version: 0.0.1
+Distribution: unstable
+Urgency: low
+Maintainer: Bartosz Kolada <Kaef@unknown>
+Changed-By: Bartosz Kolada <Kaef@unknown>
+Description: 
+ megaprojekt - <insert up to 60 chars description>
+Changes: 
+ megaprojekt (0.0.1) unstable; urgency=low
+ .
+   * Initial Release.
+Checksums-Sha1: 
+ 78250c27acdf1a895a1ea733393fa55a88e6c931 336058 megaprojekt_0.0.1_armel.deb
+Checksums-Sha256: 
+ 9b12aca20633023a1b843d9c133f0defe318f495f720a931a1f526598540bf12 336058 megaprojekt_0.0.1_armel.deb
+Files: 
+ 17787080acafc41c8f118d132163a308 336058 user/hidden optional megaprojekt_0.0.1_armel.deb
