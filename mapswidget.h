@@ -108,4 +108,25 @@ private:
     void showEvent(QShowEvent *event);
 };
 
+class FullscreenButtonItemPrivate;
+class FullscreenButtonItem : public QObject, public QGraphicsRectItem
+{
+    Q_OBJECT
+public:
+    explicit FullscreenButtonItem(GeoMap *map);
+
+    void setRect(qreal x, qreal y, qreal w, qreal h);
+
+signals:
+    void mouseReleaseEventSignal();
+
+private:
+    FullscreenButtonItemPrivate *d;
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+};
+
 #endif // MAPSWIDGET_H

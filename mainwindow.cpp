@@ -29,6 +29,7 @@
 #include <QtGui/QX11Info>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <QDebug>
 
 #include <iostream>
 
@@ -51,6 +52,7 @@ MainWindow::MainWindow() :
     // set up the menus
     QMenuBar *mbar = new QMenuBar(this);
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
+    mbar->addAction("Fullscreen mode", this, SLOT(toggleFullScreen()));
 
     setWindowTitle("Wlan-navi");
 
@@ -198,4 +200,14 @@ void MainWindow::grabZoomKeys(bool grab)
                 reinterpret_cast<unsigned char *>(&val),
                 1);
     #endif
+}
+
+void MainWindow::toggleFullScreen()
+{
+    bool isFullScreen = windowState() & Qt::WindowFullScreen;
+
+    if (isFullScreen)
+        showNormal();
+    else
+        showFullScreen();
 }

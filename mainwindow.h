@@ -42,6 +42,7 @@ public:
 
 public slots:
     void initialize();
+    void toggleFullScreen();
 
 private slots:
     void showSearchDialog();
