@@ -52,17 +52,16 @@ MainWindow::MainWindow() :
     // set up the menus
     QMenuBar *mbar = new QMenuBar(this);
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
-    mbar->addAction("Fullscreen mode", this, SLOT(toggleFullScreen()));
 
-    setWindowTitle("Wlan-navi");
+    setMenuBar(mbar);
+    setWindowTitle("wlan-navi");
 
-    //prepare for opening network connection
+    // now begin the process of opening the network link
     netConfigManager = new QNetworkConfigurationManager;
     connect(netConfigManager, SIGNAL(updateCompleted()),
             this, SLOT(openNetworkSession()));
     netConfigManager->updateConfigurations();
 
-    this->initialize();
     this->grabZoomKeys(true);
     this->initializeWlan();
 }
@@ -126,12 +125,7 @@ void MainWindow::initialize()
         return;
     }
 
-
-        QMap<QString, QVariant >  parameters;
-    parameters["mapping.servers"] = QStringList("http://a.tile.opencyclemap.org/cycle/")
-                << "http://b.tile.opencyclemap.org/cycle/"
-                << "http://c.tile.opencyclemap.org/cycle/";
-    serviceProvider = new QGeoServiceProvider("openstreetmap", parameters);
+    serviceProvider = new QGeoServiceProvider("openstreetmap");
 
     mapsWidget->initialize(serviceProvider->mappingManager());
     connect(mapsWidget, SIGNAL(mapPanned()),
