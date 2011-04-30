@@ -30,11 +30,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <QDebug>
-
-#include <iostream>
-
-using namespace std;
-
+#ifdef Q_WS_MAEMO_5
+    #include <QMaemo5InformationBox>
+#endif
 
 /**
     Initialize MainWindow
@@ -45,6 +43,9 @@ MainWindow::MainWindow() :
     tracking(true),
     firstUpdate(true)
 {
+    //For auto-rotation, currently unsupported
+    //setAttribute(Qt::WA_Maemo5AutoOrientation, true);
+
     // our actual maps widget is the centre of the mainwindow
     mapsWidget = new MapsWidget;
     setCentralWidget(mapsWidget);
@@ -52,7 +53,8 @@ MainWindow::MainWindow() :
     // set up the menus
     QMenuBar *mbar = new QMenuBar(this);
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
-    mbar->addAction("updtn", this, SLOT(initializeWlan()));
+    mbar->addAction("Update wifi status", this, SLOT(updateWlan()));
+    mbar->addAction("Available wlans", this, SLOT(showWlanAvailableWindow()));
 
     setMenuBar(mbar);
     setWindowTitle("wlan-navi");
@@ -63,8 +65,22 @@ MainWindow::MainWindow() :
             this, SLOT(openNetworkSession()));
     netConfigManager->updateConfigurations();
 
+    //TODO: load wlan database
+
     this->grabZoomKeys(true);
     this->initializeWlan();
+}
+
+/**
+  Update wlan status
+*/
+void MainWindow::updateWlan()
+{
+    wlanInterface->UpdateNetworks();
+    #ifdef Q_WS_MAEMO_5
+        QMaemo5InformationBox::information(this, "Wifi status updated");
+    #endif
+        qDebug() << "\n SIZE:" << wlans.size() << "\n";
 }
 
 /**
@@ -73,6 +89,7 @@ MainWindow::MainWindow() :
 void MainWindow::initializeWlan()
 {
     wlanInterface = new WlanMaemo();
+    wlanInterface->setWlans(&wlans);
     wlanInterface->UpdateNetworks();
     if(wlanInterface->networks.size() > 0){
         Network net = wlanInterface->networks.front();
@@ -123,7 +140,7 @@ void MainWindow::initialize()
     QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
 
     for (int i = 0; i < providers.size(); ++i)
-       cout << providers.at(i).toLocal8Bit().constData() << endl;
+       qDebug() << providers.at(i).toLocal8Bit().constData() << endl;
 
     if (providers.size() < 1) {
         QMessageBox::information(this, tr("Wlan-navi problem"),
@@ -186,6 +203,15 @@ void MainWindow::showNavigateDialog()
 
 void MainWindow::showSearchDialog()
 {
+
+}
+
+void MainWindow::showWlanAvailableWindow()
+{
+    WlanAvailable *window = new WlanAvailable(this);
+    window->setAttribute(Qt::WA_Maemo5StackedWindow);
+    //window->setWlans(&wlans);
+    window->show();
 
 }
 

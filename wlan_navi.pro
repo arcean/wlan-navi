@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network maemo5
 
 TARGET = wlan_navi
 TEMPLATE = app
@@ -15,16 +15,22 @@ SOURCES += main.cpp\
         mainwindow.cpp\
 	mapswidget.cpp \
     WlanMaemo.cpp \
-    marker.cpp
+    marker.cpp \
+    wlanavailable.cpp
 
 HEADERS  += mainwindow.h \
 		mapswidget.h \
     WlanMaemo.h \
-    marker.h
+    marker.h \
+    wlanavailable.h
 
-FORMS    +=
-
-CONFIG += mobility11
+FORMS    += \
+    wlanavailable.ui
+maemo5 {
+    CONFIG += mobility11
+} else {
+    CONFIG += mobility
+}
 
 CONFIG += link_pkgconfig
 PKGCONFIG += glib-2.0 liblocation hildon-1 dbus-1

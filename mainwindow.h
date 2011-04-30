@@ -21,6 +21,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QList>
 #include <qnetworksession.h>
 #include <qnetworkconfigmanager.h>
 
@@ -32,8 +33,11 @@
 #include "mapswidget.h"
 #include "WlanMaemo.h"
 #include "marker.h"
+#include "wlanavailable.h"
 
 using namespace QtMobility;
+
+extern QList<Network> wlans;
 
 class MainWindow : public QMainWindow
 {
@@ -50,10 +54,12 @@ public slots:
 private slots:
     void showSearchDialog();
     void showNavigateDialog();
+    void showWlanAvailableWindow();
     void goToMyLocation();
 
     void updateMyPosition(QGeoPositionInfo info);
     void disableTracking();
+    void updateWlan();
 
     void openNetworkSession();
     void grabZoomKeys(bool grab);

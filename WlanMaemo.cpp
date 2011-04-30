@@ -45,6 +45,16 @@ void callback(DBusPendingCall* call, void* /*data*/)
   dbus_message_unref(reply);
 }
 
+void WlanMaemo::setWlans(QList<Network> *wlans)
+{
+    this->wlans = wlans;
+}
+
+QList<Network>* WlanMaemo::getWlans()
+{
+    return wlans;
+}
+
 WlanMaemo::WlanMaemo()
 {
   if (GetDBusConnection() == NULL) {
@@ -297,7 +307,8 @@ bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
     }
 
     qDebug() << "\n" << network.bitrate << " " << network.channel << " " << network.encryption << " " << QString::fromStdString(network.essid) << " " << network.encryption << " " << network.quality<< "\n";
-
+    //TODO: logic for checking & adding wlans to the db
+    wlans->append(network);
   }
 
   return true;

@@ -20,6 +20,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <QList>
 #include <dbus/dbus.h>
 #include <iostream>
 #include <list>
@@ -65,6 +66,7 @@ class WlanMaemo
 {
 private:
   DBusConnection* GetDBusConnection();
+  QList<Network> *wlans;
 
 public:
   enum PowerSaving {
@@ -90,6 +92,8 @@ public:
   bool SetPowerSaving(bool savePower);
   bool HandleMessage(DBusConnection *connection, DBusMessage *msg);
   int GetQualityFromSignalNoiseDbm(int signal, int noise);
+  void setWlans(QList<Network> *wlans);
+  QList<Network>* getWlans();
 
   std::string        defaultInterface;
   std::string        typeName;

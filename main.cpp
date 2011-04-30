@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
 
     MainWindow mw;
 
+    mw.setAttribute(Qt::WA_Maemo5StackedWindow);
+
     mw.resize(200,200);
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
     mw.showMaximized();
