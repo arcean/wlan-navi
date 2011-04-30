@@ -128,22 +128,11 @@ void FixedGraphicsView::scrollContentsBy(int dx, int dy)
     Q_UNUSED(dy)
 }
 
-
-class MapsWidgetPrivate
-{
-public:
-    GeoMap *map;
-    QGraphicsView *view;
-
-    FullscreenButtonItem *fsButtonItem;
-};
-
 MapsWidget::MapsWidget(QWidget *parent) :
-    QWidget(parent),
-    d(new MapsWidgetPrivate)
+    QWidget(parent)
 {
-    d->map = 0;
-    d->view = 0;
+    geomap = 0;
+    view = 0;
 }
 
 MapsWidget::~MapsWidget()
@@ -152,89 +141,89 @@ MapsWidget::~MapsWidget()
 
 void MapsWidget::initialize(QGeoMappingManager *manager)
 {
-    d->map = new GeoMap(manager, this);
+    geomap = new GeoMap(manager, this);
 
-    connect(d->map, SIGNAL(panned()),
+    connect(geomap, SIGNAL(panned()),
             this, SIGNAL(mapPanned()));
 
     QGraphicsScene *sc = new QGraphicsScene;
-    sc->addItem(d->map);
+    sc->addItem(geomap);
 
-    d->map->setPos(0, 0);
-    d->map->resize(this->size());
+    geomap->setPos(0, 0);
+    geomap->resize(this->size());
 
-    d->view = new FixedGraphicsView(sc, this);
-    d->view->setVisible(true);
-    d->view->setInteractive(true);
-    d->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    d->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view = new FixedGraphicsView(sc, this);
+    view->setVisible(true);
+    view->setInteractive(true);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    d->fsButtonItem = new FullscreenButtonItem(d->map);
-    sc->addItem(d->fsButtonItem);
-    sc->addItem(d->fsButtonItem->fsPixmap);
-    connect(d->fsButtonItem, SIGNAL(mouseReleaseEventSignal()), this->parentWidget(), SLOT(toggleFullScreen()));
-    d->fsButtonItem->timer = new QTimer(this);
-    d->fsButtonItem->timer->setInterval(500);
-    connect(d->fsButtonItem->timer, SIGNAL(timeout()), d->fsButtonItem, SLOT(onTimeOut()));
-    d->fsButtonItem->timer->start();
+    fsButtonItem = new FullscreenButtonItem(geomap);
+    sc->addItem(fsButtonItem);
+    sc->addItem(fsButtonItem->fsPixmap);
+    connect(fsButtonItem, SIGNAL(mouseReleaseEventSignal()), this->parentWidget(), SLOT(toggleFullScreen()));
+    fsButtonItem->timer = new QTimer(this);
+    fsButtonItem->timer->setInterval(500);
+    connect(fsButtonItem->timer, SIGNAL(timeout()), fsButtonItem, SLOT(onTimeOut()));
+    fsButtonItem->timer->start();
 
-    d->view->resize(this->size());
-    d->view->centerOn(d->map);
+    view->resize(this->size());
+    view->centerOn(geomap);
 
     Marker *me = new Marker(Marker::MyLocationMarker);
     me->setCoordinate(QGeoCoordinate(51.11, 17.022222));
-    d->map->addMapObject(me);
+    geomap->addMapObject(me);
 
 
     Marker *wlan = new Marker(Marker::StartMarker);
     wlan->setCoordinate(QGeoCoordinate(51.112, 17.022225));
-    d->map->addMapObject(wlan);
+    geomap->addMapObject(wlan);
 
     resizeEvent(0);
 
-    d->map->setCenter(QGeoCoordinate(51.11, 17.022222));
-    d->map->setZoomLevel(15);
+    geomap->setCenter(QGeoCoordinate(51.11, 17.022222));
+    geomap->setZoomLevel(15);
 }
 
 void MapsWidget::showFullscreenButton()
 {
-    d->fsButtonItem->fsPixmap->show();
-    d->fsButtonItem->timer->start();
+    fsButtonItem->fsPixmap->show();
+    fsButtonItem->timer->start();
 }
 
 void MapsWidget::setMyLocation(QGeoCoordinate location, bool center)
 {
-    if (d->map && center)
-        d->map->setCenter(location);
+    if (geomap && center)
+        geomap->setCenter(location);
 }
 
 QGraphicsGeoMap *MapsWidget::map() const
 {
-    return d->map;
+    return geomap;
 }
 
 void MapsWidget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
 
-    if (d->view && d->map) {
-        d->view->resize(size());
-        d->map->resize(width()-2, height()-2);
-        d->view->centerOn(d->map);
+    if (view && geomap) {
+        view->resize(size());
+        geomap->resize(width()-2, height()-2);
+        view->centerOn(geomap);
 
-        d->fsButtonItem->setRect(width() - 48, height() - 48, 48, 48);
+        fsButtonItem->setRect(width() - 48, height() - 48, 48, 48);
     }
 }
 
 void MapsWidget::animatedPanTo(QGeoCoordinate center)
 {
-    if (!d->map)
+    if (!geomap)
         return;
 
-    QPropertyAnimation *latAnim = new QPropertyAnimation(d->map, "centerLatitude");
+    QPropertyAnimation *latAnim = new QPropertyAnimation(geomap, "centerLatitude");
     latAnim->setEndValue(center.latitude());
     latAnim->setDuration(200);
-    QPropertyAnimation *lonAnim = new QPropertyAnimation(d->map, "centerLongitude");
+    QPropertyAnimation *lonAnim = new QPropertyAnimation(geomap, "centerLongitude");
     lonAnim->setEndValue(center.longitude());
     lonAnim->setDuration(200);
 

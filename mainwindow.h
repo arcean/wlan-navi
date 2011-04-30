@@ -31,6 +31,7 @@
 
 #include "mapswidget.h"
 #include "WlanMaemo.h"
+#include "marker.h"
 
 using namespace QtMobility;
 
@@ -68,6 +69,8 @@ private:
 
     bool tracking;
     bool firstUpdate;
+
+    Marker *me;
 };
 
 #endif // MAINWINDOW_H

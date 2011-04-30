@@ -146,6 +146,7 @@ void MainWindow::initialize()
     if (!positionSource) {
         mapsWidget->setMyLocation(QGeoCoordinate(51.11, 17.022222));
     } else {
+        me = new Marker(Marker::MyLocationMarker);
         positionSource->setUpdateInterval(1000);
         connect(positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(updateMyPosition(QGeoPositionInfo)));
@@ -168,6 +169,9 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
         mapsWidget->setMyLocation(info.coordinate(), false);
         if (tracking)
             mapsWidget->animatedPanTo(info.coordinate());
+
+        me->setCoordinate(info.coordinate());
+        mapsWidget->geomap->addMapObject(me);
     }
     if (firstUpdate) {
         firstUpdate = false;

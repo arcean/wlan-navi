@@ -83,36 +83,6 @@ protected:
     void scrollContentsBy(int dx, int dy);
 };
 
-// A widget to hold the view and scene for a GeoMap, as well
-// as control widgets
-class MapsWidgetPrivate;
-class MapsWidget : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit MapsWidget(QWidget *parent = 0);
-    ~MapsWidget();
-
-    QGraphicsGeoMap *map() const;
-
-    void animatedPanTo(QGeoCoordinate center);
-    void setMyLocation(QGeoCoordinate location, bool center=true);
-
-public slots:
-    void initialize(QGeoMappingManager *manager);
-    void showFullscreenButton();
-
-signals:
-    void mapPanned();
-
-private:
-    MapsWidgetPrivate *d;
-
-    void resizeEvent(QResizeEvent *event);
-    void showEvent(QShowEvent *event);
-};
-
 class FullscreenButtonItem : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
@@ -138,6 +108,37 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+};
+
+// A widget to hold the view and scene for a GeoMap, as well
+// as control widgets
+class MapsWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit MapsWidget(QWidget *parent = 0);
+    ~MapsWidget();
+
+    QGraphicsGeoMap *map() const;
+    GeoMap *geomap;
+    QGraphicsView *view;
+
+    FullscreenButtonItem *fsButtonItem;
+
+    void animatedPanTo(QGeoCoordinate center);
+    void setMyLocation(QGeoCoordinate location, bool center=true);
+
+public slots:
+    void initialize(QGeoMappingManager *manager);
+    void showFullscreenButton();
+
+signals:
+    void mapPanned();
+
+private:
+    void resizeEvent(QResizeEvent *event);
+    void showEvent(QShowEvent *event);
 };
 
 #endif // MAPSWIDGET_H
