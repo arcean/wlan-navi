@@ -181,9 +181,18 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     d->view->resize(this->size());
     d->view->centerOn(d->map);
 
+    Marker *me = new Marker(Marker::MyLocationMarker);
+    me->setCoordinate(QGeoCoordinate(51.11, 17.022222));
+    d->map->addMapObject(me);
+
+
+    Marker *wlan = new Marker(Marker::StartMarker);
+    wlan->setCoordinate(QGeoCoordinate(51.112, 17.022225));
+    d->map->addMapObject(wlan);
+
     resizeEvent(0);
 
-    d->map->setCenter(QGeoCoordinate(-27.5796, 153.1));
+    d->map->setCenter(QGeoCoordinate(51.11, 17.022222));
     d->map->setZoomLevel(15);
 }
 
@@ -259,7 +268,6 @@ void FullscreenButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
     QRectF fsBound = fsPixmap->boundingRect();
     QPointF fsCenter(x+w/2.0, y+h/2.0);
     QPointF fsDelta = fsCenter - fsBound.center();
-    QPointF f(0,0);
     fsPixmap->setPos(fsDelta);
 
 }

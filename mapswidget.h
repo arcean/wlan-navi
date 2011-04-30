@@ -31,6 +31,8 @@
 #include "qgeomappingmanager.h"
 #include "qgeocoordinate.h"
 
+#include "marker.h"
+
 using namespace QtMobility;
 
 class MapsWidget;

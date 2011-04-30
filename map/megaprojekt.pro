@@ -12,7 +12,7 @@ RESOURCES += megaprojekt.qrc
 #               ../../src/location/maps/tiled \
 #               ../../src/location/landmarks
 
-CONFIG += mobility
+CONFIG += mobility11
 MOBILITY += location
 equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
     MOBILITY += bearer

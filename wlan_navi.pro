@@ -9,15 +9,18 @@ QT       += core gui network
 TARGET = wlan_navi
 TEMPLATE = app
 
+RESOURCES += wlan_navi.qrc
 
 SOURCES += main.cpp\
         mainwindow.cpp\
 	mapswidget.cpp \
-    WlanMaemo.cpp
+    WlanMaemo.cpp \
+    marker.cpp
 
 HEADERS  += mainwindow.h \
 		mapswidget.h \
-    WlanMaemo.h
+    WlanMaemo.h \
+    marker.h
 
 FORMS    +=
 

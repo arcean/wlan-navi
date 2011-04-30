@@ -195,7 +195,7 @@ void MainWindow::initialize()
     positionSource = QGeoPositionInfoSource::createDefaultSource(this);
 
     if (!positionSource) {
-        mapsWidget->setMyLocation(QGeoCoordinate(51.11, 17.022222));//wrocław
+        mapsWidget->setMyLocation(QGeoCoordinate(51.11, 107.022222));//wrocław
         //mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));
         //mapsWidget->setMyLocation(QGeoCoordinate(21.1813, -86.8455));
     } else {
