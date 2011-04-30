@@ -24,24 +24,49 @@
 #include <iostream>
 #include <list>
 
+enum Type {
+  typeNone,            //! Not connected
+  typeAuto,            //! Automatic
+  typeAdHoc,           //! Ad hoc network between individual cells
+  typeInfrastructure,  //! Multi cell network
+  typeMaster,          //! Synchronisation master or AP
+  typeRepeater,        //! Repeater
+  typeSecond,          //! Second master/ repeater (backup)
+  typeMonitor,         //! Passive monitor
+  typeMesh             //! Mesh network
+};
+
+class Network
+{
+public:
+  std::string   essid;
+  Type          type;
+  unsigned      bitrate;
+  unsigned long encryption;
+  int           channel;
+  int           quality;
+
+  Network()
+  {
+    Clear();
+  }
+
+  void Clear()
+  {
+    type      =  typeNone;
+    bitrate   =  0;
+    encryption=  0;
+    quality   = -1;
+    channel   = -1;
+  }
+};
+
 class WlanMaemo
 {
 private:
   DBusConnection* GetDBusConnection();
 
 public:
-  enum Type {
-    typeNone,            //! Not connected
-    typeAuto,            //! Automatic
-    typeAdHoc,           //! Ad hoc network between individual cells
-    typeInfrastructure,  //! Multi cell network
-    typeMaster,          //! Synchronisation master or AP
-    typeRepeater,        //! Repeater
-    typeSecond,          //! Second master/ repeater (backup)
-    typeMonitor,         //! Passive monitor
-    typeMesh             //! Mesh network
-  };
-
   enum PowerSaving {
     powerSavingOn,
     powerSavingOff,
@@ -55,32 +80,6 @@ public:
     cryptWPA_EAP = 1 << 3,
     cryptWPA2    = 1 << 4
   };
-
-  class Network
-  {
-  public:
-    std::string   essid;
-    Type          type;
-    unsigned      bitrate;
-    unsigned long encryption;
-    int           channel;
-    int           quality;
-
-    Network()
-    {
-      Clear();
-    }
-
-    void Clear()
-    {
-      type      =  typeNone;
-      bitrate   =  0;
-      encryption=  0;
-      quality   = -1;
-      channel   = -1;
-    }
-  };
-
 
   WlanMaemo();
 
@@ -107,5 +106,6 @@ public:
   PowerSaving        powerSaving;
   std::list<Network> networks;
 };
+
 
 #endif // WLANMAEMO_H

@@ -19,12 +19,13 @@
 
 #include "WlanMaemo.h"
 #include <string.h>
+#include <QDebug>
 
 DBusHandlerResult DBusMsgHandler(DBusConnection *connection, DBusMessage *msg, void *data)
 {
   WlanMaemo *statusHildon = static_cast<WlanMaemo*>(data);
 
-  statusHildon->HandleMessage(connection,msg);
+  statusHildon->HandleMessage(connection, msg);
 
   return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 }
@@ -82,12 +83,12 @@ DBusConnection* WlanMaemo::GetDBusConnection()
 
     dbus_error_init(&error);
 
-    std::cout << "Connecting to Session D-Bus" << std::endl;
+    std::cout << "Connecting to System D-Bus" << std::endl;
 
-    bus = dbus_bus_get(DBUS_BUS_SESSION, &error);
+    bus = dbus_bus_get(DBUS_BUS_SYSTEM, &error);
 
     if(bus == NULL) {
-        std::cout << "Failed to open Session bus" << std::endl;
+        std::cout << "Failed to open System bus" << std::endl;
     }
 
     return bus;
@@ -95,6 +96,7 @@ DBusConnection* WlanMaemo::GetDBusConnection()
 
 bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
 {
+    std::cout << "Handle Message!" << std::endl;
   if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_CALL) {
     DBusMessage *response;
     std::string appName;
@@ -103,16 +105,19 @@ bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
     response = dbus_message_new_error(msg, "Message not implemented","Message not implemented");
     dbus_connection_send(connection, response, NULL);
     dbus_message_unref(response);
+    std::cout << "Message not implemented! return true" << std::endl;
     return true;
   }
   else if (dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_SIGNAL) {
     if (strcmp(dbus_message_get_interface(msg), "com.nokia.wlancond.signal") != 0 ||
         strcmp(dbus_message_get_path(msg), "/com/nokia/wlancond/signal") != 0 ||
         strcmp(dbus_message_get_member(msg), "scan_results") != 0) {
+        std::cout << "ret false!" << std::endl;
       return false;
     }
   }
   else {
+      std::cout << "return false!" << std::endl;
     return false;
   }
 
@@ -175,7 +180,7 @@ bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
       strValue.erase(strValue.length()-1);
     }
 
-    /* strValue holds ESSID */
+    network.essid = strValue;
 
     dbus_message_iter_next(&iter);
 
@@ -290,6 +295,9 @@ bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
     if (!network.essid.empty()) {
       networks.push_back(network);
     }
+
+    qDebug() << "\n" << network.bitrate << " " << network.channel << " " << network.encryption << " " << QString::fromStdString(network.essid) << " " << network.encryption << " " << network.quality<< "\n";
+
   }
 
   return true;

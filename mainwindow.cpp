@@ -52,6 +52,7 @@ MainWindow::MainWindow() :
     // set up the menus
     QMenuBar *mbar = new QMenuBar(this);
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
+    mbar->addAction("updtn", this, SLOT(initializeWlan()));
 
     setMenuBar(mbar);
     setWindowTitle("wlan-navi");
@@ -72,6 +73,12 @@ MainWindow::MainWindow() :
 void MainWindow::initializeWlan()
 {
     wlanInterface = new WlanMaemo();
+    wlanInterface->UpdateNetworks();
+    if(wlanInterface->networks.size() > 0){
+        Network net = wlanInterface->networks.front();
+
+        qDebug() << QString::fromStdString(net.essid) << "\n";
+    }
 }
 
 /**
