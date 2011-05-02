@@ -16,13 +16,15 @@ SOURCES += main.cpp\
 	mapswidget.cpp \
     WlanMaemo.cpp \
     marker.cpp \
-    wlanavailable.cpp
+    wlanavailable.cpp \
+    config.cpp
 
 HEADERS  += mainwindow.h \
 		mapswidget.h \
     WlanMaemo.h \
     marker.h \
-    wlanavailable.h
+    wlanavailable.h \
+    config.h
 
 FORMS    += \
     wlanavailable.ui
