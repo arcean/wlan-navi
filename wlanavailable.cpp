@@ -21,17 +21,6 @@ WlanAvailable::~WlanAvailable()
 {
     delete ui;
 }
-/*
-void WlanAvailable::setWlans(QList<Network> *wlans)
-{
-    this->wlans = wlans;
-    qDebug() << "\n WLANS: " << this->wlans->size() << "\n";
-}
-
-QList<Network>* WlanAvailable::getWlans()
-{
-    return wlans;
-}*/
 
 void WlanAvailable::loadWlans()
 {
