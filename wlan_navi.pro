@@ -33,7 +33,7 @@ maemo5 {
 }
 
 CONFIG += link_pkgconfig
-PKGCONFIG += glib-2.0 liblocation hildon-1 dbus-1
+PKGCONFIG += glib-2.0 liblocation hildon-1 dbus-1 gconf-2.0
 
 MOBILITY = location
 

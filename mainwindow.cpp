@@ -149,7 +149,7 @@ void MainWindow::initialize()
         return;
     }
 
-    serviceProvider = new QGeoServiceProvider("openstreetmap");
+    serviceProvider = new QGeoServiceProvider(loadQGeoPlugin());
 
     mapsWidget->initialize(serviceProvider->mappingManager());
     connect(mapsWidget, SIGNAL(mapPanned()),
@@ -170,6 +170,64 @@ void MainWindow::initialize()
         positionSource->startUpdates();
     }
 
+}
+
+/**
+  Load settings // QGeoServiceProvider plugin for maps
+*/
+QString MainWindow::loadQGeoPlugin()
+{
+    QString plugin = "";
+
+    GetKey(&plugin);
+    if(!plugin.compare("nokia") || !plugin.compare("openstreetmap"))
+        return plugin;
+    else
+        return "openstreetmap";
+}
+
+/**
+  Save value via GConf
+*/
+void MainWindow::StoreKey(QString value)
+{
+    GConfClient* gconfClient = gconf_client_get_default();
+    g_assert(GCONF_IS_CLIENT(gconfClient));
+
+    if(!gconf_client_set_string(gconfClient, GCONF_DIR "qgeoplugin", value.toAscii(), NULL)) {
+      qDebug() << "Failed to set QGeoService plugin!";
+    }
+
+    g_object_unref(gconfClient);
+}
+
+/**
+  Load value via GConf
+*/
+void MainWindow::GetKey(QString *value)
+{
+    GConfClient* gconfClient = gconf_client_get_default();
+
+    g_assert(GCONF_IS_CLIENT(gconfClient));
+
+    GConfValue* gcValue = NULL;
+    gcValue = gconf_client_get_without_default(gconfClient, GCONF_DIR "qgeoplugin", NULL);
+
+    if(gcValue == NULL) {
+      g_warning(" key %sqgeoplugin not found\n", GCONF_DIR);
+      g_object_unref(gconfClient);
+      return;
+    }
+
+    if(gcValue->type == GCONF_VALUE_STRING) {
+      *value = gconf_value_get_string(gcValue);
+    }
+    else {
+      g_warning(" key %smykey is not string\n", GCONF_DIR);
+    }
+
+    gconf_value_free(gcValue);
+    g_object_unref(gconfClient);
 }
 
 void MainWindow::disableTracking()

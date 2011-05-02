@@ -35,6 +35,10 @@
 #include "marker.h"
 #include "wlanavailable.h"
 
+#include <gconf/gconf-client.h>
+#define GCONF_DIR "/apps/Maemo/wlan-navi/"
+
+
 using namespace QtMobility;
 
 extern QList<Network> wlans;
@@ -50,6 +54,7 @@ public:
 public slots:
     void initialize();
     void toggleFullScreen();
+    QString loadQGeoPlugin();
 
 private slots:
     void showSearchDialog();
@@ -64,6 +69,9 @@ private slots:
     void openNetworkSession();
     void grabZoomKeys(bool grab);
     void initializeWlan();
+
+    void StoreKey(QString value);
+    void GetKey(QString *value);
 
 private:
     QGeoServiceProvider *serviceProvider;
