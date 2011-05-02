@@ -56,6 +56,7 @@ MainWindow::MainWindow() :
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
     mbar->addAction("Update wifi status", this, SLOT(updateWlan()));
     mbar->addAction("Available wlans", this, SLOT(showWlanAvailableWindow()));
+    mbar->addAction("Settings", this, SLOT(showSettingsWindow()));
 
     setMenuBar(mbar);
     setWindowTitle("wlan-navi");
@@ -220,7 +221,13 @@ void MainWindow::showWlanAvailableWindow()
     WlanAvailable *window = new WlanAvailable(this);
     window->setAttribute(Qt::WA_Maemo5StackedWindow);
     window->show();
+}
 
+void MainWindow::showSettingsWindow()
+{
+    Settings *window = new Settings(this);
+    window->setAttribute(Qt::WA_Maemo5StackedWindow);
+    window->show();
 }
 
 void MainWindow::grabZoomKeys(bool grab)

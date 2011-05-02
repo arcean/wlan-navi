@@ -17,17 +17,20 @@ SOURCES += main.cpp\
     WlanMaemo.cpp \
     marker.cpp \
     wlanavailable.cpp \
-    config.cpp
+    config.cpp \
+    settings.cpp
 
 HEADERS  += mainwindow.h \
 		mapswidget.h \
     WlanMaemo.h \
     marker.h \
     wlanavailable.h \
-    config.h
+    config.h \
+    settings.h
 
 FORMS    += \
-    wlanavailable.ui
+    wlanavailable.ui \
+    settings.ui
 maemo5 {
     CONFIG += mobility11
 } else {

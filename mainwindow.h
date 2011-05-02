@@ -34,6 +34,7 @@
 #include "WlanMaemo.h"
 #include "marker.h"
 #include "wlanavailable.h"
+#include "settings.h"
 
 using namespace QtMobility;
 
@@ -56,6 +57,7 @@ private slots:
     void showSearchDialog();
     void showNavigateDialog();
     void showWlanAvailableWindow();
+    void showSettingsWindow();
     void goToMyLocation();
 
     void updateMyPosition(QGeoPositionInfo info);
