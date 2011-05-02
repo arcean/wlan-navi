@@ -31,6 +31,7 @@ Settings::Settings(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Settings");
+    setAttribute(Qt::WA_Maemo5StackedWindow);
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
 
     loadItemsCB();

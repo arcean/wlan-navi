@@ -13,6 +13,7 @@ WlanAvailable::WlanAvailable(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Available wlans");
+    setAttribute(Qt::WA_Maemo5StackedWindow);
     this->loadWlans();
 }
 

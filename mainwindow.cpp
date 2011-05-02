@@ -219,14 +219,12 @@ void MainWindow::showSearchDialog()
 void MainWindow::showWlanAvailableWindow()
 {
     WlanAvailable *window = new WlanAvailable(this);
-    window->setAttribute(Qt::WA_Maemo5StackedWindow);
     window->show();
 }
 
 void MainWindow::showSettingsWindow()
 {
     Settings *window = new Settings(this);
-    window->setAttribute(Qt::WA_Maemo5StackedWindow);
     window->show();
 }
 
