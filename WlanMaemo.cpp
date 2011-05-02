@@ -250,38 +250,6 @@ bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
       network.type = typeAuto;
     }
 
-    /*
-    if (uintValue & (1 << 16)) {
-      std::cout << "Bitrate: 10" << std::endl;
-    }
-    else if (uintValue & (1 << 17)) {
-      std::cout << "Bitrate: 20" << std::endl;
-    }
-    else if (uintValue & (1 << 18)) {
-      std::cout << "Bitrate: 55" << std::endl;
-    }
-    else if (uintValue & (1 << 19)) {
-      std::cout << "Bitrate: 60" << std::endl;
-    }
-    else if (uintValue & (1 << 20)) {
-      std::cout << "Bitrate: 90" << std::endl;
-    }
-    else if (uintValue & (1 << 21)) {
-      std::cout << "Bitrate: 110" << std::endl;
-    }
-    else if (uintValue & (1 << 22)) {
-      std::cout << "Bitrate: 120" << std::endl;
-    }
-    else if (uintValue & (1 << 23)) {
-      std::cout << "Bitrate: 180" << std::endl;
-    }
-    else if (uintValue & (1 << 24)) {
-      std::cout << "Bitrate: 260" << std::endl;
-    }
-    else if (uintValue & (1 << 25)) {
-      std::cout << "Bitrate: 540" << std::endl;
-    }*/
-
     dbus_message_iter_next(&iter);
 
     network.encryption = 0;

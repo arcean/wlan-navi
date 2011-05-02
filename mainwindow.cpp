@@ -80,7 +80,6 @@ void MainWindow::updateWlan()
     #ifdef Q_WS_MAEMO_5
         QMaemo5InformationBox::information(this, "Wifi status updated");
     #endif
-        qDebug() << "\n SIZE:" << wlans.size() << "\n";
 }
 
 /**
@@ -91,11 +90,6 @@ void MainWindow::initializeWlan()
     wlanInterface = new WlanMaemo();
     wlanInterface->setWlans(&wlans);
     wlanInterface->UpdateNetworks();
-    if(wlanInterface->networks.size() > 0){
-        Network net = wlanInterface->networks.front();
-
-        qDebug() << QString::fromStdString(net.essid) << "\n";
-    }
 }
 
 /**
@@ -195,7 +189,7 @@ void MainWindow::StoreKey(QString value)
     g_assert(GCONF_IS_CLIENT(gconfClient));
 
     if(!gconf_client_set_string(gconfClient, GCONF_DIR "qgeoplugin", value.toAscii(), NULL)) {
-      qDebug() << "Failed to set QGeoService plugin!";
+      g_warning(" Failed to set QGeoServicePlugin!\n", GCONF_DIR);
     }
 
     g_object_unref(gconfClient);
@@ -223,7 +217,7 @@ void MainWindow::GetKey(QString *value)
       *value = gconf_value_get_string(gcValue);
     }
     else {
-      g_warning(" key %smykey is not string\n", GCONF_DIR);
+      g_warning(" key %sqgeoplugin is not string\n", GCONF_DIR);
     }
 
     gconf_value_free(gcValue);
@@ -268,7 +262,6 @@ void MainWindow::showWlanAvailableWindow()
 {
     WlanAvailable *window = new WlanAvailable(this);
     window->setAttribute(Qt::WA_Maemo5StackedWindow);
-    //window->setWlans(&wlans);
     window->show();
 
 }
@@ -281,7 +274,7 @@ void MainWindow::grabZoomKeys(bool grab)
             return;
         }
 
-        unsigned long val = (grab) ? 1 : 0;
+        unsigned long val = grab ? 1 : 0;
         Atom atom = XInternAtom(QX11Info::display(), "_HILDON_ZOOM_KEY_ATOM", False);
         if (!atom) {
             qWarning("Unable to obtain _HILDON_ZOOM_KEY_ATOM. This will only work "
