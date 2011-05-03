@@ -181,8 +181,23 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     resizeEvent(0);
 
+    //Ugly hack for resizing mapsWidget, without that it has 800x423 (wtf!?)
+    if(width() > height())
+    {
+        //We are in landscape mode
+        view->resize(802,424);
+        geomap->resize(800 - 2, 424 - 2);
+    }
+    else
+    {
+        //We are in portrait mode
+        view->resize(482, 744);
+        geomap->resize(480 - 2, 744 - 2);
+    }
+    view->centerOn(geomap);
     geomap->setCenter(QGeoCoordinate(51.11, 17.022222));
     geomap->setZoomLevel(15);
+
 }
 
 void MapsWidget::showFullscreenButton()
