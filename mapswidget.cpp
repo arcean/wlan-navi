@@ -94,7 +94,7 @@ void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         markerPressed = false;
     }
-
+    emit mapTouched();
     this->setFocus();
     event->accept();
 }
