@@ -32,10 +32,12 @@
 #include "qgeocoordinate.h"
 
 #include "marker.h"
+#include "WlanMaemo.h"
 
 using namespace QtMobility;
 
 class MapsWidget;
+class MarkerManager;
 
 // The graphics item that actually contains the map
 class GeoMap : public QGraphicsGeoMap
@@ -70,6 +72,7 @@ private:
 signals:
     void panned();
     void mapTouched();
+    void clicked(Marker *marker);
 };
 
 class FixedGraphicsView : public QGraphicsView
@@ -123,11 +126,13 @@ public:
     QGraphicsGeoMap *map() const;
     GeoMap *geomap;
     QGraphicsView *view;
+    MarkerManager *markerManager;
 
     FullscreenButtonItem *fsButtonItem;
 
     void animatedPanTo(QGeoCoordinate center);
     void setMyLocation(QGeoCoordinate location, bool center=true);
+    void addWlanMarker(Network network, QGeoCoordinate cords);
 
 public slots:
     void initialize(QGeoMappingManager *manager);
@@ -135,6 +140,7 @@ public slots:
 
 signals:
     void mapPanned();
+    void markerClicked(Marker *marker);
 
 private:
     void resizeEvent(QResizeEvent *event);

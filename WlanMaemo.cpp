@@ -55,6 +55,9 @@ QList<Network>* WlanMaemo::getWlans()
     return wlans;
 }
 
+/**
+  Class constructor
+*/
 WlanMaemo::WlanMaemo()
 {
   if (GetDBusConnection() == NULL) {
@@ -71,6 +74,9 @@ std::string WlanMaemo::GetDefaultInterface() const
     return "wlan0";
 }
 
+/**
+  Computes signal quality form signal strenght and noise.
+*/
 int WlanMaemo::GetQualityFromSignalNoiseDbm(int signal, int noise)
 {
   int quality = signal - noise;
@@ -104,6 +110,9 @@ DBusConnection* WlanMaemo::GetDBusConnection()
     return bus;
 }
 
+/**
+  Handles received messages.
+*/
 bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
 {
     std::cout << "Handle Message!" << std::endl;
@@ -277,6 +286,9 @@ bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
     qDebug() << "\n" << network.bitrate << " " << network.channel << " " << network.encryption << " " << QString::fromStdString(network.essid) << " " << network.encryption << " " << network.quality<< "\n";
     //TODO: logic for checking & adding wlans to the db
     wlans->append(network);
+
+    //Emit signal wlansUpdated(), so the mainwindow will add new markers on the geomap.
+    emit this->wlansUpdated();
   }
 
   return true;
@@ -363,4 +375,34 @@ bool WlanMaemo::SetPowerSaving(bool savePower)
     dbus_message_unref(msg);
 
     return result;
+}
+
+/**
+  Translates id Encryption type into string.
+*/
+QString encryptionToString(unsigned long encryptionType)
+{
+    QString name;
+
+    switch (encryptionType) {
+        case 0:
+            name = "None";
+            break;
+        case 1:
+            name = "WEP";
+            break;
+        case 2:
+            name = "WPA PSK";
+            break;
+        case 3:
+            name = "WPA EAP";
+            break;
+        case 4:
+            name = "WPA2";
+            break;
+        default:
+            name = "Unknown";
+            break;
+    }
+    return name;
 }

@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     marker.cpp \
     wlanavailable.cpp \
     config.cpp \
-    settings.cpp
+    settings.cpp \
+    markerinfo.cpp
 
 HEADERS  += mainwindow.h \
 		mapswidget.h \
@@ -26,11 +27,13 @@ HEADERS  += mainwindow.h \
     marker.h \
     wlanavailable.h \
     config.h \
-    settings.h
+    settings.h \
+    markerinfo.h
 
 FORMS    += \
     wlanavailable.ui \
-    settings.ui
+    settings.ui \
+    markerinfo.ui
 maemo5 {
     CONFIG += mobility11
 } else {

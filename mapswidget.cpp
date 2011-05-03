@@ -68,6 +68,13 @@ void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     panActive = true;
 
+    markerPressed = false;
+    QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+    if (objects.size() > 0) {
+        pressed = objects.first();
+        markerPressed = true;
+    }
+
     this->setFocus();
     event->accept();
 }
@@ -76,7 +83,18 @@ void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     panActive = false;
 
-    emit mapTouched();
+    if (markerPressed) {
+        // check if we're still over the object
+        QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+        if (objects.contains(pressed)) {
+            Marker *m = dynamic_cast<Marker*>(pressed);
+            if (m)
+                emit clicked(m);
+        }
+
+        markerPressed = false;
+    }
+
     this->setFocus();
     event->accept();
 }
@@ -98,6 +116,9 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 }
 
+/**
+  Actually, there's only support for the zoom key
+*/
 void GeoMap::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
@@ -145,6 +166,8 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     connect(geomap, SIGNAL(panned()),
             this, SIGNAL(mapPanned()));
+    connect(geomap, SIGNAL(clicked(Marker*)),
+            this, SIGNAL(markerClicked(Marker*)));
 
     QGraphicsScene *sc = new QGraphicsScene;
     sc->addItem(geomap);
@@ -170,14 +193,16 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     view->resize(this->size());
     view->centerOn(geomap);
 
+//Sample markers
     Marker *me = new Marker(Marker::MyLocationMarker);
     me->setCoordinate(QGeoCoordinate(51.11, 17.022222));
     geomap->addMapObject(me);
 
 
-    Marker *wlan = new Marker(Marker::StartMarker);
-    wlan->setCoordinate(QGeoCoordinate(51.112, 17.022225));
+    Marker *wlan = new Marker(Marker::OpenWlanMarker);
+    wlan->setCoordinate(QGeoCoordinate(51.1115, 17.022256));
     geomap->addMapObject(wlan);
+//End of sample markers
 
     resizeEvent(0);
 
@@ -197,7 +222,6 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     view->centerOn(geomap);
     geomap->setCenter(QGeoCoordinate(51.11, 17.022222));
     geomap->setZoomLevel(15);
-
 }
 
 void MapsWidget::showFullscreenButton()
@@ -252,6 +276,17 @@ void MapsWidget::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
     resizeEvent(0);
+}
+
+/**
+  Adds WLAN marker based on network and our coordinates
+*/
+void MapsWidget::addWlanMarker(Network network, QGeoCoordinate cords)
+{
+    Marker *wlan = new Marker(Marker::OpenWlanMarker);
+    wlan->setCoordinate(cords);
+    wlan->setName(QString::fromStdString(network.essid));
+    geomap->addMapObject(wlan);
 }
 
 FullscreenButtonItem::FullscreenButtonItem(GeoMap *map)

@@ -20,7 +20,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <QObject>
 #include <QList>
+#include <QString>
 #include <dbus/dbus.h>
 #include <iostream>
 #include <list>
@@ -62,11 +64,15 @@ public:
   }
 };
 
-class WlanMaemo
+class WlanMaemo : public QObject
 {
+    Q_OBJECT
 private:
   DBusConnection* GetDBusConnection();
   QList<Network> *wlans;
+
+signals:
+    void wlansUpdated();
 
 public:
   enum PowerSaving {
@@ -110,6 +116,8 @@ public:
   PowerSaving        powerSaving;
   std::list<Network> networks;
 };
+
+  QString encryptionToString(unsigned long encryptionType);
 
 
 #endif // WLANMAEMO_H

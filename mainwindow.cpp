@@ -85,6 +85,16 @@ void MainWindow::updateWlan()
 }
 
 /**
+  Add new markers for just discovered wlans
+*/
+void MainWindow::updateWlanAddMarker()
+{
+    //WARNING: Creates marker only for the last network from the list!
+    //Only for testing purposes.
+    mapsWidget->addWlanMarker(wlans.at(wlans.size()-1), getMyCords());
+}
+
+/**
   Initialize wlan interface
 */
 void MainWindow::initializeWlan()
@@ -148,8 +158,13 @@ void MainWindow::initialize()
     serviceProvider = new QGeoServiceProvider(loadQGeoPlugin());
 
     mapsWidget->initialize(serviceProvider->mappingManager());
+
     connect(mapsWidget, SIGNAL(mapPanned()),
             this, SLOT(disableTracking()));
+    connect(mapsWidget, SIGNAL(markerClicked(Marker*)),
+            this, SLOT(showMarkerInfoWindow(Marker*)));
+    connect(wlanInterface, SIGNAL(wlansUpdated()),
+            this, SLOT(updateWlanAddMarker()));
 
     if (positionSource)
         delete positionSource;
@@ -158,6 +173,7 @@ void MainWindow::initialize()
 
     if (!positionSource) {
         mapsWidget->setMyLocation(QGeoCoordinate(51.11, 17.022222));
+        myCords = QGeoCoordinate(51.11, 17.022222);
     } else {
         me = new Marker(Marker::MyLocationMarker);
         positionSource->setUpdateInterval(1000);
@@ -165,7 +181,6 @@ void MainWindow::initialize()
                 this, SLOT(updateMyPosition(QGeoPositionInfo)));
         positionSource->startUpdates();
     }
-
 }
 
 /**
@@ -203,7 +218,12 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
     if (firstUpdate) {
         firstUpdate = false;
     }
+    myCords = info.coordinate();
+}
 
+QGeoCoordinate MainWindow::getMyCords()
+{
+    return myCords;
 }
 
 void MainWindow::showNavigateDialog()
@@ -228,6 +248,15 @@ void MainWindow::showSettingsWindow()
     window->show();
 }
 
+void MainWindow::showMarkerInfoWindow(Marker *marker)
+{
+    MarkerInfo *window = new MarkerInfo(this, marker, &wlans);
+    window->show();
+}
+
+/**
+  Enable zoom keys
+*/
 void MainWindow::grabZoomKeys(bool grab)
 {
     #ifdef Q_WS_MAEMO_5
@@ -255,6 +284,9 @@ void MainWindow::grabZoomKeys(bool grab)
     #endif
 }
 
+/**
+  Turns fullscreen mode on and off.
+*/
 void MainWindow::toggleFullScreen()
 {
     bool isFullScreen = windowState() & Qt::WindowFullScreen;

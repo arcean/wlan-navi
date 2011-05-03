@@ -35,6 +35,7 @@
 #include "marker.h"
 #include "wlanavailable.h"
 #include "settings.h"
+#include "markerinfo.h"
 
 using namespace QtMobility;
 
@@ -48,6 +49,8 @@ public:
     ~MainWindow();
     WlanMaemo *wlanInterface;
 
+    QGeoCoordinate getMyCords();
+
 public slots:
     void initialize();
     void toggleFullScreen();
@@ -58,11 +61,13 @@ private slots:
     void showNavigateDialog();
     void showWlanAvailableWindow();
     void showSettingsWindow();
+    void showMarkerInfoWindow(Marker *marker);
     void goToMyLocation();
 
     void updateMyPosition(QGeoPositionInfo info);
     void disableTracking();
     void updateWlan();
+    void updateWlanAddMarker();
 
     void openNetworkSession();
     void grabZoomKeys(bool grab);
@@ -78,6 +83,7 @@ private:
 
     bool tracking;
     bool firstUpdate;
+    QGeoCoordinate myCords;
 
     Marker *me;
 };
