@@ -32,7 +32,6 @@ void WlanAvailable::loadWlans()
 
     if(wlans.size() <= 0)
     {
-        qDebug() << "wlans size <= 0 !";
         return;
     }
 

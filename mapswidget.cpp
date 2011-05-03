@@ -181,7 +181,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     resizeEvent(0);
 
-    //Ugly hack for resizing mapsWidget, without that it has 800x423 (wtf!?)
+    //Ugly hack for resizing mapsWidget, without that it's not taking whole window
     if(width() > height())
     {
         //We are in landscape mode
