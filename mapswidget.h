@@ -31,7 +31,6 @@
 #include "qgeomappingmanager.h"
 #include "qgeocoordinate.h"
 
-#include "marker.h"
 #include "WlanMaemo.h"
 
 using namespace QtMobility;
