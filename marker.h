@@ -32,6 +32,9 @@
 #include "qlandmark.h"
 #include "qgeoboundingcircle.h"
 
+//Our radius for location:
+#define radius 0.001
+
 using namespace QtMobility;
 
 class MarkerPrivate;

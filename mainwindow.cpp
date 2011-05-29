@@ -73,6 +73,92 @@ MainWindow::MainWindow() :
     this->initializeWlan();
 }
 
+void MainWindow::setNetworkID(int i)
+{
+
+    int BufSize = 255;
+    char latitude[BufSize];
+    char longitude[BufSize];
+
+    ::snprintf(latitude, BufSize, "%2.3f", myCords.latitude());
+    ::snprintf(longitude, BufSize, "%2.3f", myCords.longitude());
+    QString s_latitude = QString::fromAscii(latitude);
+    QString s_longitude = QString::fromAscii(longitude);
+    QString essid = QString::fromStdString(wlans.at(i).essid);
+    QString id = s_latitude + s_longitude + essid;
+
+    if(!checkIfExists(id))
+    {
+        qDebug() << "\nWLAN doesn't exists! Adding new.";
+        mapsWidget->addWlanMarker(wlans.at(i), getMyCords());
+        Network net = wlans.at(i);
+        net.id = id;
+      //  wlans.removeAt(i);
+     //   wlans.append(net);
+        wlans.replace(i, net);
+    }
+    else
+    {
+        int temp = getNetworkWithID(id);
+        qDebug() << "\n TEMP: " << temp;
+        if(temp != -1)
+        {
+            if(wlans.at(temp).quality < wlans.at(i).quality)
+            {
+                qDebug() << "\nWLAN exists! Adding new with better signal quality.";
+                //Lower signal quality, actual network is better
+                mapsWidget->addWlanMarker(wlans.at(i), getMyCords());
+                mapsWidget->removeWlanMarker(wlans.at(temp));
+                Network net = wlans.at(i);
+                net.id = id;
+                wlans.replace(i, net);
+                //remove wlans.at(temp) from wlans
+                qDebug() << "\n Wlans size: " << wlans.size();
+                wlans.removeAt(temp);
+            }
+            else
+            {
+                qDebug() << "\nWLAN exists! I'm not addind a new one.";
+                //remove current network from wlans
+                qDebug() << "\n Wlans size: " << wlans.size();
+                wlans.removeAt(i);
+            }
+        }
+    }
+
+    qDebug() << "\nESSID: " << QString::fromStdString(wlans.at(i).essid) << "ID: " << id << "\n";
+}
+
+int MainWindow::getNetworkWithID(QString id)
+{
+    for(int i = 0; i < wlans.size(); i++)
+    {
+        if(wlans.at(i).id.compare(id) == 0)
+        {
+            qDebug() << "\nGetting network " << id << " exists";
+            return i;
+        }
+    }
+    qDebug() << "\nNetwork " << id << " doesn't exist";
+    return -1;
+}
+
+bool MainWindow::checkIfExists(QString id)
+{
+    for(int i = 0; i < wlans.size(); i++)
+    {
+        int a = wlans.at(i).id.compare(id);
+        qDebug() << "\n a: " << a << " id_receiv: " << id << " net_id: " << wlans.at(i).id;
+        if(wlans.at(i).id.compare(id) == 0)
+        {
+            qDebug() << "\nNetwork " << id << " exists";
+            return true;
+        }
+    }
+    qDebug() << "\nNetwork " << id << " doesn't exist";
+    return false;
+}
+
 /**
   Update wlan status
 */
@@ -91,7 +177,37 @@ void MainWindow::updateWlanAddMarker()
 {
     //WARNING: Creates marker only for the last network from the list!
     //Only for testing purposes.
-    mapsWidget->addWlanMarker(wlans.at(wlans.size()-1), getMyCords());
+    //setNetworkID(wlans.at(wlans.size()-1));
+    //mapsWidget->addWlanMarker(wlans.at(wlans.size()-1), getMyCords());
+
+    //Sets uniqe id for each available network
+
+    for(int i = 0; i < wlans.size(); i++)
+    {
+        qDebug() << "\nWIFI: "<< wlans.at(i).id << ";" << QString::fromStdString(wlans.at(i).essid);
+    }
+
+    QList<Network> wi = wlanInterface->getWlans();
+
+    for(int j = 0; j < wi.size(); j++)
+    {
+        wlans.append(wi.at(j));
+    }
+
+    wlanInterface->clearList();
+
+    for(int i = 0; i < wlans.size(); i++)
+    {
+        qDebug() << "\nWLAN: " << QString::fromStdString(wlans.at(i).essid);
+        setNetworkID(i);
+        if(wlans.size() >= i)
+            break;
+    }
+    for(int i = 0; i < wlans.size(); i++)
+    {
+        qDebug() << "\nWIFI: "<< wlans.at(i).id << ";" << QString::fromStdString(wlans.at(i).essid);
+    }
+    //wlanInterface->clearList();
 }
 
 /**
@@ -100,7 +216,7 @@ void MainWindow::updateWlanAddMarker()
 void MainWindow::initializeWlan()
 {
     wlanInterface = new WlanMaemo();
-    wlanInterface->setWlans(&wlans);
+    //wlanInterface->setWlans(&wlans);
     wlanInterface->UpdateNetworks();
 }
 

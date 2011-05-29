@@ -45,14 +45,9 @@ void callback(DBusPendingCall* call, void* /*data*/)
   dbus_message_unref(reply);
 }
 
-void WlanMaemo::setWlans(QList<Network> *wlans)
+QList<Network> WlanMaemo::getWlans()
 {
-    this->wlans = wlans;
-}
-
-QList<Network>* WlanMaemo::getWlans()
-{
-    return wlans;
+    return wlansWI;
 }
 
 /**
@@ -284,8 +279,11 @@ bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
     }
 
     qDebug() << "\n" << network.bitrate << " " << network.channel << " " << network.encryption << " " << QString::fromStdString(network.essid) << " " << network.encryption << " " << network.quality<< "\n";
+
+    network.id = "";
+
     //TODO: logic for checking & adding wlans to the db
-    wlans->append(network);
+    wlansWI.append(network);
 
     //Emit signal wlansUpdated(), so the mainwindow will add new markers on the geomap.
     emit this->wlansUpdated();
@@ -375,6 +373,11 @@ bool WlanMaemo::SetPowerSaving(bool savePower)
     dbus_message_unref(msg);
 
     return result;
+}
+
+void WlanMaemo::clearList()
+{
+    wlansWI.clear();
 }
 
 /**

@@ -133,6 +133,7 @@ public:
     void animatedPanTo(QGeoCoordinate center);
     void setMyLocation(QGeoCoordinate location, bool center=true);
     void addWlanMarker(Network network, QGeoCoordinate cords);
+    void removeWlanMarker(Network network);
 
 public slots:
     void initialize(QGeoMappingManager *manager);

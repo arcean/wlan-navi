@@ -39,8 +39,6 @@
 
 using namespace QtMobility;
 
-extern QList<Network> wlans;
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -50,6 +48,8 @@ public:
     WlanMaemo *wlanInterface;
 
     QGeoCoordinate getMyCords();
+
+    QList<Network> wlans;
 
 public slots:
     void initialize();
@@ -68,6 +68,10 @@ private slots:
     void disableTracking();
     void updateWlan();
     void updateWlanAddMarker();
+
+    void setNetworkID(int i);
+    bool checkIfExists(QString id);
+    int getNetworkWithID(QString id);
 
     void openNetworkSession();
     void grabZoomKeys(bool grab);

@@ -26,6 +26,7 @@
 #include <dbus/dbus.h>
 #include <iostream>
 #include <list>
+#include "marker.h"
 
 enum Type {
   typeNone,            //! Not connected
@@ -42,12 +43,14 @@ enum Type {
 class Network
 {
 public:
+  QString       id;
   std::string   essid;
   Type          type;
   unsigned      bitrate;
   unsigned long encryption;
   int           channel;
   int           quality;
+  Marker        *marker;
 
   Network()
   {
@@ -62,6 +65,11 @@ public:
     quality   = -1;
     channel   = -1;
   }
+
+  void SetID(QString id)
+  {
+      this->id = id;
+  }
 };
 
 class WlanMaemo : public QObject
@@ -69,7 +77,7 @@ class WlanMaemo : public QObject
     Q_OBJECT
 private:
   DBusConnection* GetDBusConnection();
-  QList<Network> *wlans;
+  QList<Network> wlansWI;
 
 signals:
     void wlansUpdated();
@@ -98,8 +106,8 @@ public:
   bool SetPowerSaving(bool savePower);
   bool HandleMessage(DBusConnection *connection, DBusMessage *msg);
   int GetQualityFromSignalNoiseDbm(int signal, int noise);
-  void setWlans(QList<Network> *wlans);
-  QList<Network>* getWlans();
+  QList<Network> getWlans();
+  void clearList();
 
   std::string        defaultInterface;
   std::string        typeName;

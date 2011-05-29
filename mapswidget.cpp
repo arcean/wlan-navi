@@ -283,10 +283,18 @@ void MapsWidget::showEvent(QShowEvent *event)
 */
 void MapsWidget::addWlanMarker(Network network, QGeoCoordinate cords)
 {
-    Marker *wlan = new Marker(Marker::OpenWlanMarker);
-    wlan->setCoordinate(cords);
-    wlan->setName(QString::fromStdString(network.essid));
-    geomap->addMapObject(wlan);
+    network.marker = new Marker(Marker::OpenWlanMarker);
+    network.marker->setCoordinate(cords);
+    network.marker->setName(network.id);
+    geomap->addMapObject(network.marker);
+}
+
+/**
+  Removes WLAN marker
+*/
+void MapsWidget::removeWlanMarker(Network network)
+{
+    geomap->removeMapObject(network.marker);
 }
 
 FullscreenButtonItem::FullscreenButtonItem(GeoMap *map)
