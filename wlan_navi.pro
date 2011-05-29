@@ -33,8 +33,6 @@ HEADERS  += mainwindow.h \
 FORMS    += \
     wlanavailable.ui \
     settings.ui \
-    markerinfo.ui \
-    settings.ui \
     markerinfo.ui
 maemo5 {
     CONFIG += mobility11
