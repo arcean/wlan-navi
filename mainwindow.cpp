@@ -93,6 +93,7 @@ void MainWindow::setNetworkID(int i)
         Network net = tempWlan.at(i);
         net.id = id;
         wlans.append(net);
+
         mapsWidget->addWlanMarker(wlans.last(), getMyCords());
     }
     else
@@ -110,7 +111,6 @@ void MainWindow::setNetworkID(int i)
                 wlans.replace(temp, net);
 
                 mapsWidget->addWlanMarker(wlans.at(temp), getMyCords());
-
             }
             else
             {
@@ -166,17 +166,10 @@ void MainWindow::updateWlan()
 */
 void MainWindow::updateWlanAddMarker()
 {
-    //WARNING: Creates marker only for the last network from the list!
-    //Only for testing purposes.
-    //setNetworkID(wlans.at(wlans.size()-1));
-    //mapsWidget->addWlanMarker(wlans.at(wlans.size()-1), getMyCords());
-
     //Sets uniqe id for each available network
 
     tempWlan.clear();
     tempWlan = wlanInterface->getWlans();
-
-
 
     for(int i = 0; i < tempWlan.size(); i++)
     {

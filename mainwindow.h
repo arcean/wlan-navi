@@ -50,7 +50,6 @@ public:
     QGeoCoordinate getMyCords();
 
     QList<Network> wlans;
-
     QList<Network> tempWlan;
 
 public slots:
