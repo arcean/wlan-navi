@@ -281,6 +281,7 @@ bool WlanMaemo::HandleMessage(DBusConnection *connection, DBusMessage *msg)
     qDebug() << "\n" << network.bitrate << " " << network.channel << " " << network.encryption << " " << QString::fromStdString(network.essid) << " " << network.encryption << " " << network.quality<< "\n";
 
     network.id = "";
+    network.remove = false;
 
     //TODO: logic for checking & adding wlans to the db
     wlansWI.append(network);

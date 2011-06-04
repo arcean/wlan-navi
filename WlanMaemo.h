@@ -51,6 +51,7 @@ public:
   int           channel;
   int           quality;
   Marker        *marker;
+  bool          remove;
 
   Network()
   {

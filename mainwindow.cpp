@@ -84,49 +84,40 @@ void MainWindow::setNetworkID(int i)
     ::snprintf(longitude, BufSize, "%2.3f", myCords.longitude());
     QString s_latitude = QString::fromAscii(latitude);
     QString s_longitude = QString::fromAscii(longitude);
-    QString essid = QString::fromStdString(wlans.at(i).essid);
+    QString essid = QString::fromStdString(tempWlan.at(i).essid);
     QString id = s_latitude + s_longitude + essid;
 
     if(!checkIfExists(id))
     {
         qDebug() << "\nWLAN doesn't exists! Adding new.";
-        mapsWidget->addWlanMarker(wlans.at(i), getMyCords());
-        Network net = wlans.at(i);
+        Network net = tempWlan.at(i);
         net.id = id;
-      //  wlans.removeAt(i);
-     //   wlans.append(net);
-        wlans.replace(i, net);
+        wlans.append(net);
+        mapsWidget->addWlanMarker(wlans.last(), getMyCords());
     }
     else
     {
         int temp = getNetworkWithID(id);
-        qDebug() << "\n TEMP: " << temp;
         if(temp != -1)
         {
-            if(wlans.at(temp).quality < wlans.at(i).quality)
+            if(wlans.at(temp).quality < tempWlan.at(i).quality)
             {
                 qDebug() << "\nWLAN exists! Adding new with better signal quality.";
                 //Lower signal quality, actual network is better
-                mapsWidget->addWlanMarker(wlans.at(i), getMyCords());
                 mapsWidget->removeWlanMarker(wlans.at(temp));
-                Network net = wlans.at(i);
+                Network net = tempWlan.at(i);
                 net.id = id;
-                wlans.replace(i, net);
-                //remove wlans.at(temp) from wlans
-                qDebug() << "\n Wlans size: " << wlans.size();
-                wlans.removeAt(temp);
+                wlans.replace(temp, net);
+
+                mapsWidget->addWlanMarker(wlans.at(temp), getMyCords());
+
             }
             else
             {
                 qDebug() << "\nWLAN exists! I'm not addind a new one.";
-                //remove current network from wlans
-                qDebug() << "\n Wlans size: " << wlans.size();
-                wlans.removeAt(i);
             }
         }
     }
-
-    qDebug() << "\nESSID: " << QString::fromStdString(wlans.at(i).essid) << "ID: " << id << "\n";
 }
 
 int MainWindow::getNetworkWithID(QString id)
@@ -182,32 +173,24 @@ void MainWindow::updateWlanAddMarker()
 
     //Sets uniqe id for each available network
 
+    tempWlan.clear();
+    tempWlan = wlanInterface->getWlans();
+
+
+
+    for(int i = 0; i < tempWlan.size(); i++)
+    {
+        qDebug() << "\nWLAN: " << QString::fromStdString(tempWlan.at(i).essid);
+        setNetworkID(i);
+        qDebug() << "\nWLAN2: "<< tempWlan.at(i).id << ";" << QString::fromStdString(tempWlan.at(i).essid);
+    }
+
     for(int i = 0; i < wlans.size(); i++)
     {
         qDebug() << "\nWIFI: "<< wlans.at(i).id << ";" << QString::fromStdString(wlans.at(i).essid);
-    }
-
-    QList<Network> wi = wlanInterface->getWlans();
-
-    for(int j = 0; j < wi.size(); j++)
-    {
-        wlans.append(wi.at(j));
     }
 
     wlanInterface->clearList();
-
-    for(int i = 0; i < wlans.size(); i++)
-    {
-        qDebug() << "\nWLAN: " << QString::fromStdString(wlans.at(i).essid);
-        setNetworkID(i);
-        if(wlans.size() >= i)
-            break;
-    }
-    for(int i = 0; i < wlans.size(); i++)
-    {
-        qDebug() << "\nWIFI: "<< wlans.at(i).id << ";" << QString::fromStdString(wlans.at(i).essid);
-    }
-    //wlanInterface->clearList();
 }
 
 /**

@@ -51,6 +51,8 @@ public:
 
     QList<Network> wlans;
 
+    QList<Network> tempWlan;
+
 public slots:
     void initialize();
     void toggleFullScreen();

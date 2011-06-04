@@ -1,11 +1,11 @@
 #include "markerinfo.h"
 #include "ui_markerinfo.h"
 
-MarkerInfo::MarkerInfo(QWidget *parent, Marker *marker, QList<Network> *wlans) :
+MarkerInfo::MarkerInfo(QWidget *parent, Marker *marker, QList<Network> *wlans_info) :
     QMainWindow(parent),
     ui(new Ui::MarkerInfo),
     marker(marker),
-    wlans(wlans)
+    wlans_info(wlans_info)
 {
     ui->setupUi(this);
     setWindowTitle("WLAN info");
@@ -24,9 +24,9 @@ void MarkerInfo::loadInfo()
     bool found = false;
     int index = -1;
 
-    for(int i = 0; i < wlans->size(); i++)
+    for(int i = 0; i < wlans_info->size(); i++)
     {
-        if(!wlanName.compare(QString::fromStdString(wlans->at(i).essid)))
+        if(!wlanName.compare(QString::fromStdString(wlans_info->at(i).essid)))
         {
             //It's what we're looking for
             found = true;
@@ -38,8 +38,8 @@ void MarkerInfo::loadInfo()
     if(found)
     {
         ui->wlanNameLabel->setText(wlanName);
-        ui->channelLabel->setText(QString::number(wlans->at(index).channel));
-        ui->signalStrengthLabel->setText(QString::number(wlans->at(index).quality) + " %");
-        ui->encryptionLabel->setText(encryptionToString(wlans->at(index).encryption));
+        ui->channelLabel->setText(QString::number(wlans_info->at(index).channel));
+        ui->signalStrengthLabel->setText(QString::number(wlans_info->at(index).quality) + " %");
+        ui->encryptionLabel->setText(encryptionToString(wlans_info->at(index).encryption));
     }
 }

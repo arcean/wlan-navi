@@ -26,7 +26,7 @@ private slots:
 private:
     Ui::MarkerInfo *ui;
     Marker *marker;
-    QList<Network> *wlans;
+    QList<Network> *wlans_info;
 };
 
 #endif // MARKERINFO_H
