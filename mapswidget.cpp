@@ -69,7 +69,14 @@ void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
     panActive = true;
 
     markerPressed = false;
-    QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+    QPointF point = event->pos();
+    qreal x = point.x()-5;
+    qreal y = point.y()-5;
+    qreal width = 10;
+    qreal height = 10;
+    QRect rect(x, y, width, height);
+    //QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+    QList<QGeoMapObject*> objects = this->mapObjectsInScreenRect(rect);
     if (objects.size() > 0) {
         pressed = objects.first();
         markerPressed = true;
@@ -85,7 +92,14 @@ void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     if (markerPressed) {
         // check if we're still over the object
-        QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+        QPointF point = event->pos();
+        qreal x = point.x()-5;
+        qreal y = point.y()-5;
+        qreal width = 10;
+        qreal height = 10;
+        QRect rect(x, y, width, height);
+        //QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+        QList<QGeoMapObject*> objects = this->mapObjectsInScreenRect(rect);
         if (objects.contains(pressed)) {
             Marker *m = dynamic_cast<Marker*>(pressed);
             if (m)
