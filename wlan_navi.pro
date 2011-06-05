@@ -18,8 +18,7 @@ SOURCES += main.cpp\
     marker.cpp \
     wlanavailable.cpp \
     config.cpp \
-    settings.cpp \
-    markerinfo.cpp
+    settings.cpp
 
 HEADERS  += mainwindow.h \
 		mapswidget.h \
@@ -27,8 +26,7 @@ HEADERS  += mainwindow.h \
     marker.h \
     wlanavailable.h \
     config.h \
-    settings.h \
-    markerinfo.h
+    settings.h
 
 FORMS    += \
     wlanavailable.ui \

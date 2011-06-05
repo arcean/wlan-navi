@@ -113,6 +113,35 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 };
 
+class NetworkInfoView: public QObject, public QGraphicsRectItem
+{
+    Q_OBJECT
+
+public:
+    GeoMap *map;
+    QGraphicsSimpleTextItem *nameText;
+    QGraphicsSimpleTextItem *strengthText;
+    QGraphicsRectItem *sigStrength1;
+    QGraphicsRectItem *sigStrength;
+    double xb;
+    double yb;
+    double wb;
+    double hb;
+    bool visible;
+
+    explicit NetworkInfoView(GeoMap *map);
+
+    void setRect(qreal x, qreal y, qreal w, qreal h);
+    void setStrength(double s);
+    void setBarBound(int x,int y, int w, int h);
+    void setNetworkName(QString s);
+    ~NetworkInfoView();
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+};
+
 // A widget to hold the view and scene for a GeoMap, as well
 // as control widgets
 class MapsWidget : public QWidget
@@ -129,11 +158,14 @@ public:
     MarkerManager *markerManager;
 
     FullscreenButtonItem *fsButtonItem;
+    NetworkInfoView *networkInfoView;
 
     void animatedPanTo(QGeoCoordinate center);
     void setMyLocation(QGeoCoordinate location, bool center=true);
     void addWlanMarker(Network network, QGeoCoordinate cords);
     void removeWlanMarker(Network network);
+    void showWlanInfo(Marker *marker, QList<Network> wlanList);
+    void loadWlanInfo(Marker *marker, QList<Network> wlanList);
 
 public slots:
     void initialize(QGeoMappingManager *manager);
@@ -146,6 +178,7 @@ signals:
 private:
     void resizeEvent(QResizeEvent *event);
     void showEvent(QShowEvent *event);
+    QGraphicsScene *sc;
 };
 
 #endif // MAPSWIDGET_H

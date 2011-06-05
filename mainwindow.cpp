@@ -342,8 +342,9 @@ void MainWindow::showSettingsWindow()
 
 void MainWindow::showMarkerInfoWindow(Marker *marker)
 {
-    MarkerInfo *window = new MarkerInfo(this, marker, &wlans);
-    window->show();
+    //MarkerInfo *window = new MarkerInfo(this, marker, &wlans);
+    //window->show();
+    mapsWidget->showWlanInfo(marker, wlans);
 }
 
 /**

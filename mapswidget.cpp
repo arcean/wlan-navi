@@ -169,7 +169,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     connect(geomap, SIGNAL(clicked(Marker*)),
             this, SIGNAL(markerClicked(Marker*)));
 
-    QGraphicsScene *sc = new QGraphicsScene;
+    sc = new QGraphicsScene;
     sc->addItem(geomap);
 
     geomap->setPos(0, 0);
@@ -189,6 +189,15 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     fsButtonItem->timer->setInterval(500);
     connect(fsButtonItem->timer, SIGNAL(timeout()), fsButtonItem, SLOT(onTimeOut()));
     fsButtonItem->timer->start();
+
+    networkInfoView = new NetworkInfoView(geomap);
+    sc->addItem(networkInfoView);
+    networkInfoView->nameText->hide();
+    networkInfoView->sigStrength->hide();
+    networkInfoView->sigStrength1->hide();
+    networkInfoView->strengthText->hide();
+    networkInfoView->setRect(0,0,0,0);
+    networkInfoView->visible = false;
 
     view->resize(this->size());
     view->centerOn(geomap);
@@ -251,6 +260,8 @@ void MapsWidget::resizeEvent(QResizeEvent *event)
         view->centerOn(geomap);
 
         fsButtonItem->setRect(width() - 48, height() - 48, 48, 48);
+        if(networkInfoView->visible)
+            networkInfoView->setRect(2,2,width()/2,height()/2);
     }
 }
 
@@ -295,6 +306,51 @@ void MapsWidget::addWlanMarker(Network network, QGeoCoordinate cords)
 void MapsWidget::removeWlanMarker(Network network)
 {
     geomap->removeMapObject(network.marker);
+}
+
+/**
+  Shows wlan info dialog
+  */
+void MapsWidget::showWlanInfo(Marker *marker, QList<Network> wlanList)
+{
+    if(marker->getMarkerType() != 1)
+        return;
+
+    networkInfoView->setRect(2,2,width()/2,height()/2);
+    networkInfoView->nameText->show();
+    networkInfoView->sigStrength->show();
+    networkInfoView->sigStrength1->show();
+    networkInfoView->strengthText->show();
+    networkInfoView->visible = true;
+
+    loadWlanInfo(marker, wlanList);
+}
+
+/**
+  Loads informations for the wlan info dialog
+  */
+void MapsWidget::loadWlanInfo(Marker *marker, QList<Network> wlanList)
+{
+    QString wlanName = marker->getName();
+    bool found = false;
+    int index = -1;
+
+    for(int i = 0; i < wlanList.size(); i++)
+    {
+        if(!wlanName.compare(wlanList.at(i).id))
+        {
+            //It's what we're looking for
+            found = true;
+            index = i;
+            break;
+        }
+    }
+
+    if(found)
+    {
+        networkInfoView->setNetworkName(QString::fromStdString(wlanList.at(index).essid));
+        networkInfoView->setStrength(wlanList.at(index).quality/100);
+    }
 }
 
 FullscreenButtonItem::FullscreenButtonItem(GeoMap *map)
@@ -345,4 +401,103 @@ void FullscreenButtonItem::onTimeOut()
 {
     this->fsPixmap->hide();
     this->timer->stop();
+}
+
+NetworkInfoView::NetworkInfoView(GeoMap *map)
+{
+    map = map;
+    setPen(QPen(QBrush(), 0));
+    setBrush(QBrush(QColor(0,0,0,150)));
+
+    nameText = new QGraphicsSimpleTextItem(this);
+    strengthText = new QGraphicsSimpleTextItem(this);
+
+    sigStrength= new QGraphicsRectItem(this);
+    sigStrength1= new QGraphicsRectItem(this);
+
+    sigStrength->setPen(QPen(QBrush(), 0));
+    sigStrength->setBrush(QBrush(QColor(0,0,0,150)));
+
+    sigStrength1->setPen(QPen(QBrush(), 0));
+    sigStrength1->setBrush(QBrush(QColor(0,200,200,200)));
+
+
+
+}
+
+void NetworkInfoView::setRect(qreal x, qreal y, qreal w, qreal h){
+    QGraphicsRectItem::setRect(x,y,w,h);
+
+    QFont f;
+    f.setFixedPitch(true);
+    f.setPixelSize(20.0);
+
+    nameText->setText("Network: ");
+    nameText->setBrush(QBrush(Qt::white));
+    nameText->setFont(f);
+
+    nameText->setPos(120.0, 50.0);
+
+    strengthText->setText("Strength: ");
+    strengthText->setBrush(QBrush(Qt::white));
+    strengthText->setFont(f);
+    strengthText->setPos(120.0, 80.0);
+
+    this->setBarBound(125,140,250,50);
+
+}
+/**
+  Draws bar on the window
+*/
+void NetworkInfoView::setBarBound(int x,int y, int w, int h){
+    xb=x;
+    yb=y;
+    wb=w;
+    hb=h;
+    sigStrength->setRect(xb,yb,wb,hb);
+    sigStrength1->setRect(xb,yb,wb*0.0,hb);
+
+}
+/**
+  Sets network name
+  */
+
+void NetworkInfoView::setNetworkName(QString s){
+    nameText->setText("Network: "+s);
+}
+
+
+/**
+  Sets signal strength; double type, from 0 to 1
+  */
+void NetworkInfoView::setStrength(double s){
+
+    QString str="Strength: ";
+    str.append(QString("%1").arg(s*100));
+    strengthText->setText(str);
+
+    sigStrength1->setRect(xb,yb,wb*s,hb);
+}
+
+void NetworkInfoView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    event->accept();
+}
+
+/**
+  Closes the window
+  */
+void NetworkInfoView::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    nameText->hide();
+    sigStrength->hide();
+    sigStrength1->hide();
+    strengthText->hide();
+    this->setRect(0,0,0,0);
+    this->visible = false;
+
+    event->accept();
+}
+
+NetworkInfoView::~NetworkInfoView(){
 }
