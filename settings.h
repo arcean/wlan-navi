@@ -35,8 +35,14 @@ class Settings : public QMainWindow
 public:
     explicit Settings(QWidget *parent = 0);
     ~Settings();
+    void showSettingsWindow();
+
+signals:
+    void wlanTimerUpdated();
 
 private slots:
+    void saveWlanTimer();
+    void loadWlanTimer();
     void saveQGeoProvider();
     void loadQGeoProvider();
     void loadItemsCB();

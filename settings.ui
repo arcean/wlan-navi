@@ -50,6 +50,29 @@
      <string>Save</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>150</y>
+      <width>451</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Scan interval (in seconds):</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="scanInterval_CB">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>200</y>
+      <width>451</width>
+      <height>81</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
@@ -58,7 +81,7 @@
    <sender>saveButton</sender>
    <signal>clicked(bool)</signal>
    <receiver>Settings</receiver>
-   <slot>close()</slot>
+   <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>712</x>

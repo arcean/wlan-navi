@@ -34,7 +34,7 @@ void GetKeyString(QString *value, QString key);
 void StoreKeyBool(bool value, QString key);
 void GetKeyBool(bool *value, QString key);
 //For int
-void StoreKeyInt(bool value, QString key);
-void GetKeyInt(bool *value, QString key);
+void StoreKeyInt(int value, QString key);
+void GetKeyInt(int *value, QString key);
 
 #endif // CONFIG_H

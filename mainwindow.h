@@ -35,7 +35,6 @@
 #include "marker.h"
 #include "wlanavailable.h"
 #include "settings.h"
-#include "markerinfo.h"
 
 using namespace QtMobility;
 
@@ -56,8 +55,11 @@ public slots:
     void initialize();
     void toggleFullScreen();
     QString loadQGeoPlugin();
+    int loadWlanTimerSettings();
 
 private slots:
+    void reloadWlanTimerSettings();
+
     void showSearchDialog();
     void showNavigateDialog();
     void showWlanAvailableWindow();
@@ -91,6 +93,9 @@ private:
     QGeoCoordinate myCords;
 
     Marker *me;
+    QTimer *wlanTimer;
+
+    Settings *settingsWindow;
 };
 
 #endif // MAINWINDOW_H

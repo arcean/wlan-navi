@@ -410,6 +410,7 @@ void FullscreenButtonItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     timer->start();
     fsPixmap->show();
     event->accept();
+
 }
 
 void FullscreenButtonItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -524,6 +525,7 @@ void NetworkInfoView::mousePressEvent(QGraphicsSceneMouseEvent *event)
     this->visible = false;
 
     event->accept();
+
 }
 
 NetworkInfoView::~NetworkInfoView(){

@@ -54,7 +54,7 @@ MainWindow::MainWindow() :
     // set up the menus
     QMenuBar *mbar = new QMenuBar(this);
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
-    mbar->addAction("Update wifi status", this, SLOT(updateWlan()));
+    mbar->addAction("Force scanning", this, SLOT(updateWlan()));
     mbar->addAction("Available wlans", this, SLOT(showWlanAvailableWindow()));
     mbar->addAction("Settings", this, SLOT(showSettingsWindow()));
 
@@ -66,6 +66,8 @@ MainWindow::MainWindow() :
     connect(netConfigManager, SIGNAL(updateCompleted()),
             this, SLOT(openNetworkSession()));
     netConfigManager->updateConfigurations();
+
+    settingsWindow = new Settings(this);
 
     //TODO: load wlan database
 
@@ -273,6 +275,14 @@ void MainWindow::initialize()
                 this, SLOT(updateMyPosition(QGeoPositionInfo)));
         positionSource->startUpdates();
     }
+
+    wlanTimer = new QTimer(this);
+    wlanTimer->setInterval(loadWlanTimerSettings());
+    connect(wlanTimer, SIGNAL(timeout()), this, SLOT(updateWlan()));
+    connect(settingsWindow, SIGNAL(wlanTimerUpdated()),
+            this, SLOT(reloadWlanTimerSettings()));
+    wlanTimer->start();
+
 }
 
 /**
@@ -287,6 +297,28 @@ QString MainWindow::loadQGeoPlugin()
         return plugin;
     else
         return "openstreetmap";
+}
+
+/**
+  Reloads wlanTimer config
+*/
+void MainWindow::reloadWlanTimerSettings()
+{
+    this->wlanTimer->stop();
+    wlanTimer->setInterval(loadWlanTimerSettings());
+    this->wlanTimer->start();
+}
+
+/**
+  Loads settings for wlanTimer
+*/
+int MainWindow::loadWlanTimerSettings()
+{
+    int value = 60;
+
+    GetKeyInt(&value, "wlanTimer");
+    value = value * 1000;
+    return value;
 }
 
 void MainWindow::disableTracking()
@@ -336,14 +368,11 @@ void MainWindow::showWlanAvailableWindow()
 
 void MainWindow::showSettingsWindow()
 {
-    Settings *window = new Settings(this);
-    window->show();
+    settingsWindow->showSettingsWindow();
 }
 
 void MainWindow::showMarkerInfoWindow(Marker *marker)
 {
-    //MarkerInfo *window = new MarkerInfo(this, marker, &wlans);
-    //window->show();
     mapsWidget->showWlanInfo(marker, wlans);
 }
 

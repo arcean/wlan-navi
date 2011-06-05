@@ -33,9 +33,7 @@ Settings::Settings(QWidget *parent) :
     setWindowTitle("Settings");
     setAttribute(Qt::WA_Maemo5StackedWindow);
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
-
     loadItemsCB();
-    loadQGeoProvider();
 }
 
 Settings::~Settings()
@@ -44,13 +42,31 @@ Settings::~Settings()
 }
 
 /**
-  Adds items to the mapProviderCB combobox
+  Shows this window
+*/
+void Settings::showSettingsWindow()
+{
+    loadQGeoProvider();
+    loadWlanTimer();
+
+    this->show();
+}
+
+/**
+  Adds items to the comboboxes
 */
 void Settings::loadItemsCB()
 {
     ui->mapProviderCB->addItem("OpenStreetMap", "openstreetmap");
     ui->mapProviderCB->addItem("Nokia OVI Maps", "nokia");
+    ui->scanInterval_CB->addItem("10", "10");
+    ui->scanInterval_CB->addItem("30", "30");
+    ui->scanInterval_CB->addItem("60", "60");
+    ui->scanInterval_CB->addItem("180", "180");
+    ui->scanInterval_CB->addItem("300", "300");
+    ui->scanInterval_CB->addItem("600", "600");
 }
+
 
 /**
   Checks what plugin should be set as default
@@ -63,13 +79,11 @@ void Settings::loadQGeoProvider()
     if(!plugin.compare("nokia"))
     {
         int index = ui->mapProviderCB->findData("nokia");
-        qDebug() << "H: " << index;
         ui->mapProviderCB->setCurrentIndex(index);
     }
     else
     {
         int index = ui->mapProviderCB->findData("openstreetmap");
-        qDebug() << "H2: " << index;
         ui->mapProviderCB->setCurrentIndex(index);
     }
 }
@@ -86,9 +100,45 @@ void Settings::saveQGeoProvider()
         StoreKeyString(plugin, "qgeoplugin");
 }
 
+/**
+  Checks what value shoud be set as default
+*/
+void Settings::loadWlanTimer()
+{
+    int value = 60;
+
+    GetKeyInt(&value, "wlanTimer");
+    if(value > 9)
+    {
+        int index = ui->scanInterval_CB->findData(value);
+        ui->scanInterval_CB->setCurrentIndex(index);
+    }
+    else
+    {
+        int index = ui->scanInterval_CB->findData(60);
+        ui->scanInterval_CB->setCurrentIndex(index);
+    }
+}
+
+/**
+  Saves wlanTimer settings
+*/
+void Settings::saveWlanTimer()
+{
+    QString value_str = ui->scanInterval_CB->currentText();
+    int value = value_str.toInt();
+    if(value > 9)
+        StoreKeyInt(value, "wlanTimer");
+    else
+        StoreKeyInt(60, "wlanTimer");
+
+    emit this->wlanTimerUpdated();
+}
+
 void Settings::saveSettings()
 {
     saveQGeoProvider();
+    saveWlanTimer();
     #ifdef Q_WS_MAEMO_5
         QMaemo5InformationBox::information(this, "Settings saved");
     #endif
