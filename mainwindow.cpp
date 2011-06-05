@@ -55,7 +55,7 @@ MainWindow::MainWindow() :
     QMenuBar *mbar = new QMenuBar(this);
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
     mbar->addAction("Force scanning", this, SLOT(updateWlan()));
-    mbar->addAction("Available wlans", this, SLOT(showWlanAvailableWindow()));
+    //mbar->addAction("Available wlans", this, SLOT(showWlanAvailableWindow()));
     mbar->addAction("Settings", this, SLOT(showSettingsWindow()));
 
     setMenuBar(mbar);
@@ -175,9 +175,16 @@ void MainWindow::updateWlanAddMarker()
 
     for(int i = 0; i < tempWlan.size(); i++)
     {
-        qDebug() << "\nWLAN: " << QString::fromStdString(tempWlan.at(i).essid);
-        setNetworkID(i);
-        qDebug() << "\nWLAN2: "<< tempWlan.at(i).id << ";" << QString::fromStdString(tempWlan.at(i).essid);
+        if(encryptionToString(tempWlan.at(i).encryption).compare("None") == 0)
+        {
+            qDebug() << "\nWLAN: " << QString::fromStdString(tempWlan.at(i).essid);
+            setNetworkID(i);
+            qDebug() << "\nWLAN2: "<< tempWlan.at(i).id << ";" << QString::fromStdString(tempWlan.at(i).essid);
+        }
+        else
+        {
+            qDebug() << "\nWLAN: " << QString::fromStdString(tempWlan.at(i).essid)  << encryptionToString(tempWlan.at(i).encryption);
+        }
     }
 
     for(int i = 0; i < wlans.size(); i++)
@@ -251,6 +258,19 @@ void MainWindow::initialize()
 
     serviceProvider = new QGeoServiceProvider(loadQGeoPlugin());
 
+    if(loadQGeoPlugin().compare("nokia") == 0)
+    {
+
+        m_pViewActionGroup = new QActionGroup(this);
+        m_pViewActionGroup->setExclusive(true);
+
+        QAction *pAction;
+        pAction = new QAction("Street Map", m_pViewActionGroup); pAction->setCheckable(true); pAction->setChecked(1);
+        pAction = new QAction("Satellite Map", m_pViewActionGroup); pAction ->setCheckable(true); pAction->setChecked(0);
+        menuBar()->addActions(m_pViewActionGroup->actions());
+        connect(m_pViewActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(onViewChanged(QAction*)));
+    }
+
     mapsWidget->initialize(serviceProvider->mappingManager());
 
     connect(mapsWidget, SIGNAL(mapPanned()),
@@ -283,6 +303,20 @@ void MainWindow::initialize()
             this, SLOT(reloadWlanTimerSettings()));
     wlanTimer->start();
 
+}
+
+/**
+  Changes map type. Only OVI Maps
+*/
+void MainWindow::onViewChanged(QAction* pAction)
+{
+    qDebug() << "\nVALUE: " << m_pViewActionGroup->actions().indexOf(pAction);
+    int value = m_pViewActionGroup->actions().indexOf(pAction);
+
+    if(value)
+        mapsWidget->geomap->setMapType(QGraphicsGeoMap::SatelliteMapDay);
+    else
+        mapsWidget->geomap->setMapType(QGraphicsGeoMap::StreetMap);
 }
 
 /**

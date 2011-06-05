@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Map provider:</string>
+     <string>Map provider (restart needed):</string>
     </property>
    </widget>
    <widget class="QComboBox" name="mapProviderCB">

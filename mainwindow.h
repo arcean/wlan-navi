@@ -22,6 +22,7 @@
 
 #include <QMainWindow>
 #include <QList>
+#include <QActionGroup>
 #include <qnetworksession.h>
 #include <qnetworkconfigmanager.h>
 
@@ -66,6 +67,7 @@ private slots:
     void showSettingsWindow();
     void showMarkerInfoWindow(Marker *marker);
     void goToMyLocation();
+    void onViewChanged(QAction* pAction);
 
     void updateMyPosition(QGeoPositionInfo info);
     void disableTracking();
@@ -96,6 +98,7 @@ private:
     QTimer *wlanTimer;
 
     Settings *settingsWindow;
+    QActionGroup *m_pViewActionGroup;
 };
 
 #endif // MAINWINDOW_H
