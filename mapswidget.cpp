@@ -261,7 +261,20 @@ void MapsWidget::resizeEvent(QResizeEvent *event)
 
         fsButtonItem->setRect(width() - 48, height() - 48, 48, 48);
         if(networkInfoView->visible)
+        {
+            networkInfoView->nameText->hide();
+            networkInfoView->sigStrength->hide();
+            networkInfoView->sigStrength1->hide();
+            networkInfoView->strengthText->hide();
+            networkInfoView->setRect(0,0,0,0);
+            /*
             networkInfoView->setRect(2,2,width()/2,height()/2);
+            networkInfoView->nameText->show();
+            networkInfoView->sigStrength->show();
+            networkInfoView->sigStrength1->show();
+            networkInfoView->strengthText->show();
+            */
+        }
     }
 }
 
