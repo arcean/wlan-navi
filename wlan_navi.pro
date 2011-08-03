@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network maemo5
+QT       += core gui network maemo5 sql
 
 TARGET = wlan_navi
 TEMPLATE = app
@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     marker.cpp \
     wlanavailable.cpp \
     config.cpp \
-    settings.cpp
+    settings.cpp \
+    statistics.cpp \
+    qtsqlcheck.cpp
 
 HEADERS  += mainwindow.h \
 		mapswidget.h \
@@ -26,11 +28,14 @@ HEADERS  += mainwindow.h \
     marker.h \
     wlanavailable.h \
     config.h \
-    settings.h
+    settings.h \
+    statistics.h \
+    qtsqlcheck.h
 
 FORMS    += \
     wlanavailable.ui \
-    settings.ui
+    settings.ui \
+    statistics.ui
 maemo5 {
     CONFIG += mobility11
 } else {

@@ -524,6 +524,12 @@ void MainWindow::createTable(){
     QSqlQuery query;
     bool ret = false;
     ret = query.exec("create table if not exists Wlan(id varchar(90) PRIMARY KEY, essid VARCHAR(50), latitude REAL, longitude REAL, networkQuality INTEGER, additionalInf varchar(90));");
+    /*query.exec("create table person "
+                      "(id integer primary key, "
+                      "firstname varchar(20), "
+                      "lastname varchar(30), "
+                      "age integer)");*/
+    qDebug() << "\nRET_TABLE "<<ret;
 }
 
 bool MainWindow::createConnection()

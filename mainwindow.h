@@ -36,6 +36,13 @@
 #include "marker.h"
 #include "wlanavailable.h"
 #include "settings.h"
+#include "statistics.h"
+
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QFile>
+#include <QDir>
 
 using namespace QtMobility;
 
@@ -66,6 +73,7 @@ private slots:
     void showWlanAvailableWindow();
     void showSettingsWindow();
     void showMarkerInfoWindow(Marker *marker);
+    void showStatisticsWindow();
     void goToMyLocation();
     void onViewChanged(QAction* pAction);
 
@@ -82,6 +90,12 @@ private slots:
     void grabZoomKeys(bool grab);
     void initializeWlan();
 
+    bool createConnection();
+    void createTable();
+    void insertWlan(QString id, QString ssid, double latitude, double longitute, int networkQuality, QString additionalInf);
+    void deleteWlan(QString id);
+    void loadWlanSQL();
+
 private:
     QGeoServiceProvider *serviceProvider;
     MapsWidget *mapsWidget;
@@ -96,9 +110,11 @@ private:
 
     Marker *me;
     QTimer *wlanTimer;
-
     Settings *settingsWindow;
     QActionGroup *m_pViewActionGroup;
+    int scannedCntr;
+    int openScannedCntr;
+    QSqlDatabase db;
 };
 
 #endif // MAINWINDOW_H

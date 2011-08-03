@@ -217,6 +217,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     view->centerOn(geomap);
 
 //Sample markers
+    /*
     Marker *me = new Marker(Marker::MyLocationMarker);
     me->setCoordinate(QGeoCoordinate(51.11, 17.022222));
     geomap->addMapObject(me);
@@ -224,7 +225,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     Marker *wlan = new Marker(Marker::OpenWlanMarker);
     wlan->setCoordinate(QGeoCoordinate(51.1115, 17.022256));
-    geomap->addMapObject(wlan);
+    geomap->addMapObject(wlan);*/
 //End of sample markers
 
     resizeEvent(0);
@@ -343,7 +344,7 @@ void MapsWidget::showWlanInfo(Marker *marker, QList<Network> wlanList)
     if(marker->getMarkerType() != 1)
         return;
 
-    networkInfoView->setRect(2,2,width()/2,height()/2);
+    networkInfoView->setRect(2,2,320,130);
     networkInfoView->nameText->show();
     networkInfoView->sigStrength->show();
     networkInfoView->sigStrength1->show();
@@ -373,10 +374,11 @@ void MapsWidget::loadWlanInfo(Marker *marker, QList<Network> wlanList)
         }
     }
 
+
     if(found)
     {
         networkInfoView->setNetworkName(QString::fromStdString(wlanList.at(index).essid));
-        networkInfoView->setStrength(wlanList.at(index).quality/100);
+        networkInfoView->setStrength(wlanList.at(index).quality/100.0);
     }
 }
 
@@ -464,14 +466,14 @@ void NetworkInfoView::setRect(qreal x, qreal y, qreal w, qreal h){
     nameText->setBrush(QBrush(Qt::white));
     nameText->setFont(f);
 
-    nameText->setPos(120.0, 50.0);
+    nameText->setPos(20.0, 10.0);
 
     strengthText->setText("Strength: ");
     strengthText->setBrush(QBrush(Qt::white));
     strengthText->setFont(f);
-    strengthText->setPos(120.0, 80.0);
+    strengthText->setPos(20.0, 40.0);
 
-    this->setBarBound(125,140,250,50);
+    this->setBarBound(25,70,180,50);
 
 }
 /**
